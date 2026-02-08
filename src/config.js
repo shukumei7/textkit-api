@@ -16,6 +16,20 @@ const config = {
     ULTRA:  { perDay: 2000, perMinute: 60 },
     MEGA:   { perDay: Infinity, perMinute: 120 },
   },
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY,
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    prices: {
+      BASIC: process.env.STRIPE_PRICE_BASIC,
+      PRO: process.env.STRIPE_PRICE_PRO,
+      ULTRA: process.env.STRIPE_PRICE_ULTRA,
+      MEGA: process.env.STRIPE_PRICE_MEGA,
+    },
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET || 'dev-jwt-secret-change-in-production',
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  },
   nodeEnv: process.env.NODE_ENV || 'development',
 };
 
@@ -23,6 +37,13 @@ const config = {
 if (!config.openai.apiKey && config.nodeEnv === 'production') {
   console.error('FATAL: OPENAI_API_KEY is required in production');
   process.exit(1);
+}
+
+if (!config.jwt.secret || config.jwt.secret === 'dev-jwt-secret-change-in-production') {
+  if (config.nodeEnv === 'production') {
+    console.error('FATAL: JWT_SECRET must be set in production');
+    process.exit(1);
+  }
 }
 
 module.exports = config;

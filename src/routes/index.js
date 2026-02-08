@@ -3,11 +3,17 @@ const { auth } = require('../middleware/auth');
 const { rateLimit } = require('../middleware/rate-limit');
 const { trackUsage } = require('../middleware/usage');
 const healthRoutes = require('./health');
+const authRoutes = require('./auth');
+const stripeRoutes = require('./stripe');
+const dashboardRoutes = require('./dashboard');
 
 const router = Router();
 
 // Public routes (no auth)
 router.use(healthRoutes);
+router.use(authRoutes);
+router.use(stripeRoutes);
+router.use(dashboardRoutes);
 
 // API v1 routes (auth + rate-limit + usage tracking)
 const v1 = Router();
