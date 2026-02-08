@@ -1,0 +1,35 @@
+const { Router } = require('express');
+const { auth } = require('../middleware/auth');
+const { rateLimit } = require('../middleware/rate-limit');
+const { trackUsage } = require('../middleware/usage');
+const healthRoutes = require('./health');
+
+const router = Router();
+
+// Public routes (no auth)
+router.use(healthRoutes);
+
+// API v1 routes (auth + rate-limit + usage tracking)
+const v1 = Router();
+v1.use(auth);
+v1.use(rateLimit);
+v1.use(trackUsage);
+
+// Tier 1 endpoints
+v1.use('/api/v1', require('./v1/repurpose'));
+v1.use('/api/v1', require('./v1/summarize'));
+v1.use('/api/v1', require('./v1/rewrite'));
+
+// Tier 2 endpoints
+v1.use('/api/v1', require('./v1/seo'));
+v1.use('/api/v1', require('./v1/email'));
+v1.use('/api/v1', require('./v1/headlines'));
+
+// Tier 3 endpoints
+v1.use('/api/v1', require('./v1/keywords'));
+v1.use('/api/v1', require('./v1/tone'));
+v1.use('/api/v1', require('./v1/compare'));
+
+router.use(v1);
+
+module.exports = router;

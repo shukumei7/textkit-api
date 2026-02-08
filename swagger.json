@@ -1,0 +1,1074 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "TextKit API",
+    "version": "1.0.0",
+    "description": "Pay-per-use text/content utility API for RapidAPI marketplace. Transform, analyze, and enhance text content with 9 powerful AI-powered endpoints.",
+    "contact": {
+      "name": "API Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3100",
+      "description": "Development server"
+    }
+  ],
+  "security": [
+    {
+      "RapidAPIProxySecret": []
+    },
+    {
+      "ApiKey": []
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Basic health check endpoint (no authentication required)",
+        "tags": ["Health"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "summary": "Detailed status",
+        "description": "Detailed service status including database connection and metrics (no authentication required)",
+        "tags": ["Health"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Detailed service status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    },
+                    "environment": {
+                      "type": "string",
+                      "example": "development"
+                    },
+                    "database": {
+                      "type": "string",
+                      "enum": ["connected", "error"]
+                    },
+                    "totalRequests": {
+                      "type": "integer"
+                    },
+                    "endpoints": {
+                      "type": "integer",
+                      "example": 9
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/repurpose": {
+      "post": {
+        "summary": "Repurpose content for social platforms",
+        "description": "Transform text into platform-optimized posts for Twitter, LinkedIn, Instagram, Facebook, Threads, and TikTok",
+        "tags": ["Content"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 50,
+                    "maxLength": 10000,
+                    "description": "Original text to repurpose"
+                  },
+                  "platforms": {
+                    "type": "array",
+                    "maxItems": 6,
+                    "items": {
+                      "type": "string",
+                      "enum": ["twitter", "linkedin", "instagram", "facebook", "threads", "tiktok"]
+                    },
+                    "description": "Target platforms (defaults to twitter and linkedin)"
+                  },
+                  "tone": {
+                    "type": "string",
+                    "enum": ["professional", "casual", "humorous", "inspirational", "educational"],
+                    "description": "Desired tone for repurposed content"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Content successfully repurposed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "platforms": {
+                      "type": "object",
+                      "description": "Platform-specific content variations",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "platformCount": {
+                          "type": "integer"
+                        },
+                        "tone": {
+                          "type": "string"
+                        },
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "platforms": {
+                    "twitter": "🚀 Just shipped our new feature! Here's what you need to know...",
+                    "linkedin": "I'm excited to announce that we've just released a major update..."
+                  },
+                  "metadata": {
+                    "platformCount": 2,
+                    "tone": "professional",
+                    "tokensUsed": 450
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/summarize": {
+      "post": {
+        "summary": "Summarize text",
+        "description": "Generate summaries in various lengths and formats (paragraph, bullets, numbered list)",
+        "tags": ["Content"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 50,
+                    "maxLength": 50000,
+                    "description": "Text to summarize"
+                  },
+                  "length": {
+                    "type": "string",
+                    "enum": ["brief", "medium", "detailed"],
+                    "description": "Summary length"
+                  },
+                  "format": {
+                    "type": "string",
+                    "enum": ["paragraph", "bullets", "numbered"],
+                    "description": "Summary format"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Text successfully summarized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "summary": {
+                      "type": "string"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "length": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "summary": "The article discusses three key innovations in AI: improved natural language processing, enhanced computer vision capabilities, and breakthrough developments in robotics automation.",
+                  "metadata": {
+                    "length": "brief",
+                    "format": "paragraph",
+                    "tokensUsed": 320
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/rewrite": {
+      "post": {
+        "summary": "Rewrite text with different tone",
+        "description": "Transform text style and tone while preserving core meaning",
+        "tags": ["Content"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 10000,
+                    "description": "Text to rewrite"
+                  },
+                  "tone": {
+                    "type": "string",
+                    "enum": ["formal", "casual", "persuasive", "academic", "friendly", "professional", "humorous", "empathetic"],
+                    "description": "Target tone for rewrite"
+                  },
+                  "preserveLength": {
+                    "type": "boolean",
+                    "description": "Attempt to maintain similar length"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Text successfully rewritten",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rewrittenText": {
+                      "type": "string"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "tone": {
+                          "type": "string"
+                        },
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "rewrittenText": "I am writing to formally request consideration for the proposed initiative.",
+                  "metadata": {
+                    "tone": "formal",
+                    "tokensUsed": 280
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/seo/meta": {
+      "post": {
+        "summary": "Generate SEO meta tags",
+        "description": "Create optimized meta title, description, and keywords for web pages",
+        "tags": ["SEO"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 50,
+                    "maxLength": 10000,
+                    "description": "Page content or article text"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Target page URL for context"
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Target keywords to incorporate"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SEO meta tags generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "keywords": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "title": "Complete Guide to AI Development | Best Practices 2024",
+                  "description": "Learn essential AI development techniques, tools, and frameworks. Step-by-step guide for beginners and experts.",
+                  "keywords": ["AI development", "machine learning", "neural networks", "deep learning"],
+                  "metadata": {
+                    "tokensUsed": 380
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/email/subject-lines": {
+      "post": {
+        "summary": "Generate email subject lines",
+        "description": "Create compelling email subject lines in various styles",
+        "tags": ["Marketing"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 5000,
+                    "description": "Email content or key message"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 20,
+                    "description": "Number of subject lines to generate (default: 5)"
+                  },
+                  "style": {
+                    "type": "string",
+                    "enum": ["promotional", "informational", "urgent", "curiosity", "personalized"],
+                    "description": "Subject line style"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subject lines generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "subjectLines": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "style": {
+                          "type": "string"
+                        },
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "subjectLines": [
+                    "🎉 Your Exclusive Offer Expires Tonight!",
+                    "Last Chance: 50% Off Everything",
+                    "Don't Miss Out - Sale Ends in 24 Hours"
+                  ],
+                  "metadata": {
+                    "count": 3,
+                    "style": "promotional",
+                    "tokensUsed": 290
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/headlines": {
+      "post": {
+        "summary": "Generate headlines",
+        "description": "Create attention-grabbing headlines for articles, ads, and more",
+        "tags": ["Marketing"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 5000,
+                    "description": "Content to generate headlines for"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 20,
+                    "description": "Number of headlines to generate (default: 5)"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["article", "ad", "clickbait", "seo", "listicle"],
+                    "description": "Headline type"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Headlines generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "headlines": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "headlines": [
+                    "10 Proven Strategies to Boost Your Productivity",
+                    "The Ultimate Guide to Time Management in 2024",
+                    "How Top Performers Stay Organized: Expert Tips"
+                  ],
+                  "metadata": {
+                    "count": 3,
+                    "type": "listicle",
+                    "tokensUsed": 310
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/extract/keywords": {
+      "post": {
+        "summary": "Extract keywords",
+        "description": "Identify and extract key terms, phrases, and entities from text",
+        "tags": ["Analysis"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 50000,
+                    "description": "Text to extract keywords from"
+                  },
+                  "maxKeywords": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 50,
+                    "description": "Maximum number of keywords to extract"
+                  },
+                  "includeEntities": {
+                    "type": "boolean",
+                    "description": "Include named entities (people, places, organizations)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Keywords extracted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "keywords": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "entities": {
+                      "type": "object",
+                      "properties": {
+                        "people": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "places": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "organizations": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "keywords": ["artificial intelligence", "machine learning", "neural networks", "deep learning"],
+                  "entities": {
+                    "people": ["Andrew Ng", "Geoffrey Hinton"],
+                    "places": ["Silicon Valley"],
+                    "organizations": ["OpenAI", "Google"]
+                  },
+                  "metadata": {
+                    "tokensUsed": 350
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/translate/tone": {
+      "post": {
+        "summary": "Translate tone",
+        "description": "Transform text to match a specific tone while preserving meaning",
+        "tags": ["Content"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text", "targetTone"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 10000,
+                    "description": "Text to transform"
+                  },
+                  "targetTone": {
+                    "type": "string",
+                    "enum": ["formal", "casual", "persuasive", "academic", "friendly", "professional", "humorous", "empathetic", "authoritative", "conversational"],
+                    "description": "Target tone for transformation"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tone translated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transformedText": {
+                      "type": "string"
+                    },
+                    "originalTone": {
+                      "type": "string"
+                    },
+                    "targetTone": {
+                      "type": "string"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "transformedText": "Greetings! I hope this message finds you well. I wanted to reach out regarding our upcoming project.",
+                  "originalTone": "casual",
+                  "targetTone": "formal",
+                  "metadata": {
+                    "tokensUsed": 270
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/compare": {
+      "post": {
+        "summary": "Compare texts",
+        "description": "Analyze and compare two texts across multiple aspects (tone, style, content, readability, etc.)",
+        "tags": ["Analysis"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text1", "text2"],
+                "properties": {
+                  "text1": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 10000,
+                    "description": "First text to compare"
+                  },
+                  "text2": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 10000,
+                    "description": "Second text to compare"
+                  },
+                  "aspects": {
+                    "type": "array",
+                    "maxItems": 5,
+                    "items": {
+                      "type": "string",
+                      "enum": ["tone", "style", "content", "readability", "formality"]
+                    },
+                    "description": "Specific aspects to compare (defaults to all)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comparison complete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "comparison": {
+                      "type": "object",
+                      "properties": {
+                        "tone": {
+                          "type": "object",
+                          "properties": {
+                            "text1": {
+                              "type": "string"
+                            },
+                            "text2": {
+                              "type": "string"
+                            },
+                            "difference": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "style": {
+                          "type": "object"
+                        },
+                        "summary": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "tokensUsed": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "comparison": {
+                    "tone": {
+                      "text1": "formal",
+                      "text2": "casual",
+                      "difference": "Text1 uses professional language while Text2 is conversational"
+                    },
+                    "summary": "The texts differ significantly in tone and formality but convey similar core messages."
+                  },
+                  "metadata": {
+                    "tokensUsed": 420
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "RapidAPIProxySecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-RapidAPI-Proxy-Secret",
+        "description": "RapidAPI proxy secret for production authentication"
+      },
+      "ApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Api-Key",
+        "description": "Local API key for development authentication"
+      }
+    },
+    "responses": {
+      "ValidationError": {
+        "description": "Request validation failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Validation failed"
+                },
+                "code": {
+                  "type": "string",
+                  "example": "VALIDATION_ERROR"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["text is required", "text must be at least 50 characters"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Authentication required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Unauthorized"
+                },
+                "code": {
+                  "type": "string",
+                  "example": "AUTH_REQUIRED"
+                },
+                "details": {
+                  "type": "string",
+                  "example": "Provide x-rapidapi-proxy-secret or x-api-key header"
+                }
+              }
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded",
+        "headers": {
+          "X-RateLimit-Limit-Day": {
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Daily request limit"
+          },
+          "X-RateLimit-Remaining-Day": {
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Remaining daily requests"
+          },
+          "X-RateLimit-Limit-Minute": {
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Per-minute request limit"
+          },
+          "X-RateLimit-Remaining-Minute": {
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Remaining per-minute requests"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Rate limit exceeded"
+                },
+                "code": {
+                  "type": "string",
+                  "example": "RATE_LIMIT_EXCEEDED"
+                },
+                "details": {
+                  "type": "string",
+                  "example": "Daily limit reached. Upgrade your plan for higher limits."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Health check and status endpoints"
+    },
+    {
+      "name": "Content",
+      "description": "Content transformation and manipulation"
+    },
+    {
+      "name": "SEO",
+      "description": "SEO optimization tools"
+    },
+    {
+      "name": "Marketing",
+      "description": "Marketing copy generation"
+    },
+    {
+      "name": "Analysis",
+      "description": "Text analysis and comparison"
+    }
+  ]
+}
