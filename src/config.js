@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const config = {
-  port: parseInt(process.env.PORT, 10) || 3100,
+  port: parseInt(process.env.TEXTKIT_PORT, 10) || 3100,
   openai: {
     apiKey: process.env.OPENAI_API_KEY,
     model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
