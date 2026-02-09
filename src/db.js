@@ -1,13 +1,14 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
+const config = require('./config');
 
 let db;
 
 function getDb() {
   if (db) return db;
 
-  const dbDir = path.join(__dirname, '..', 'db');
+  const dbDir = config.dbPath;
   fs.mkdirSync(dbDir, { recursive: true });
 
   db = new Database(path.join(dbDir, 'textkit.db'));

@@ -1,6 +1,8 @@
 require('dotenv').config();
+const path = require('path');
 
 const config = {
+  dbPath: process.env.DB_PATH || path.join(__dirname, '..', 'db'),
   port: parseInt(process.env.TEXTKIT_PORT, 10) || 3100,
   openai: {
     apiKey: process.env.OPENAI_API_KEY,

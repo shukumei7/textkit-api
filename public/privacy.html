@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — TextKit API</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .legal-content {
+      padding-top: 100px;
+      padding-bottom: 60px;
+      max-width: 800px;
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    .legal-content h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .legal-content .last-updated {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 48px;
+    }
+    .legal-content h2 {
+      font-size: 1.3rem;
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+    .legal-content p,
+    .legal-content li {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .legal-content ul {
+      padding-left: 24px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Text<span>Kit</span></a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/docs">Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="legal-content">
+    <h1>Privacy Policy</h1>
+    <p class="last-updated">Last updated: February 2026</p>
+
+    <h2>Information We Collect</h2>
+    <p>We collect the following information when you use TextKit API:</p>
+    <ul>
+      <li><strong>Email address</strong> — Required for account creation and communication</li>
+      <li><strong>Name</strong> — Optional, provided during registration</li>
+      <li><strong>Password</strong> — Stored as a bcrypt hash, never in plain text</li>
+      <li><strong>Stripe customer ID</strong> — Generated when you create a subscription</li>
+      <li><strong>API usage logs</strong> — Including endpoint accessed, timestamp, and tokens used</li>
+      <li><strong>Session cookies</strong> — A single httpOnly JWT cookie for authentication</li>
+    </ul>
+
+    <h2>How We Use Your Information</h2>
+    <p>We use your information for the following purposes:</p>
+    <ul>
+      <li>Account creation and authentication</li>
+      <li>Processing subscription billing through Stripe</li>
+      <li>Tracking API usage and enforcing rate limits based on your subscription tier</li>
+      <li>Improving the service and analyzing usage patterns</li>
+      <li>Communicating service updates, billing issues, or security notifications</li>
+    </ul>
+
+    <h2>Third-Party Services</h2>
+    <p>We share limited data with the following third-party services:</p>
+    <ul>
+      <li><strong>Stripe</strong> — Processes payments and manages subscriptions. Stripe receives your email address and payment information. We store only your Stripe customer ID.</li>
+      <li><strong>OpenAI</strong> — Processes text content you submit through the API. Your input text is sent to OpenAI for AI-powered processing. OpenAI does not receive your email, account information, or API keys.</li>
+    </ul>
+    <p>Neither service receives your password. Stripe and OpenAI operate under their own privacy policies.</p>
+
+    <h2>Data Storage & Security</h2>
+    <p>Your data is stored in a SQLite database on secure servers. We implement the following security measures:</p>
+    <ul>
+      <li>Passwords are hashed using bcrypt and never stored in plain text</li>
+      <li>All connections to the API and website are encrypted using HTTPS</li>
+      <li>API keys are stored as SHA-256 hashes in the database</li>
+      <li>Database uses WAL (Write-Ahead Logging) mode for data integrity</li>
+    </ul>
+
+    <h2>Cookies</h2>
+    <p>We use a single httpOnly session cookie containing a JWT (JSON Web Token) for authentication. This cookie is:</p>
+    <ul>
+      <li>Set only when you log in</li>
+      <li>HttpOnly and secure (HTTPS-only in production)</li>
+      <li>Used solely for authentication, not tracking</li>
+    </ul>
+    <p>We do not use analytics cookies, tracking cookies, or third-party cookies.</p>
+
+    <h2>Data Retention</h2>
+    <ul>
+      <li><strong>Account data</strong> — Retained until you request deletion of your account</li>
+      <li><strong>API usage logs</strong> — Retained for 90 days, then automatically deleted</li>
+      <li><strong>Stripe billing records</strong> — Maintained by Stripe according to their retention policy</li>
+    </ul>
+
+    <h2>Your Rights</h2>
+    <p>Under PIPEDA (Canada's Personal Information Protection and Electronic Documents Act), you have the right to:</p>
+    <ul>
+      <li>Access your personal data</li>
+      <li>Request correction of inaccurate data</li>
+      <li>Request deletion of your data</li>
+      <li>Withdraw consent for data processing</li>
+    </ul>
+    <p>To exercise these rights, email us at support@textkit.io. We will respond within 30 days.</p>
+
+    <h2>Children's Privacy</h2>
+    <p>TextKit API is not intended for use by anyone under the age of 18. We do not knowingly collect personal information from children.</p>
+
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy at any time. We will notify you of material changes by email or through a notice on our website. Your continued use of the service after such changes constitutes your acceptance of the updated policy.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy? Email us at support@textkit.io.</p>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>TextKit API &copy; 2026 &middot; <a href="/terms.html">Terms</a> &middot; <a href="/privacy.html">Privacy</a></p>
+    </div>
+  </footer>
+</body>
+</html>
