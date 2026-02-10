@@ -77,6 +77,17 @@ function getDb() {
   db.prepare('CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash)').run();
   db.prepare('CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON subscriptions(user_id)').run();
 
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS page_views (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      path TEXT NOT NULL,
+      referrer TEXT,
+      created_at TEXT DEFAULT (datetime('now'))
+    )
+  `).run();
+
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_page_views_path ON page_views(path, created_at)').run();
+
   return db;
 }
 

@@ -114,4 +114,66 @@ router.get('/admin/recent', (req, res) => {
   res.json({ requests: rows });
 });
 
+// Registration stats
+router.get('/admin/registrations', (req, res) => {
+  const db = getDb();
+
+  const total = db.prepare('SELECT COUNT(*) as count FROM users').get();
+  const last30 = db.prepare("SELECT COUNT(*) as count FROM users WHERE created_at >= datetime('now', '-30 days')").get();
+  const today = db.prepare("SELECT COUNT(*) as count FROM users WHERE created_at >= datetime('now', 'start of day')").get();
+
+  const daily = db.prepare(
+    `SELECT date(created_at) as date, COUNT(*) as count
+     FROM users
+     WHERE created_at >= datetime('now', '-30 days')
+     GROUP BY date(created_at)
+     ORDER BY date ASC`
+  ).all();
+
+  const recent = db.prepare(
+    `SELECT id, email, name, created_at
+     FROM users
+     ORDER BY id DESC
+     LIMIT 10`
+  ).all();
+
+  res.json({
+    total: total.count,
+    last30Days: last30.count,
+    today: today.count,
+    daily,
+    recent,
+  });
+});
+
+// Page view stats
+router.get('/admin/page-views', (req, res) => {
+  const db = getDb();
+
+  const total = db.prepare('SELECT COUNT(*) as count FROM page_views').get();
+  const today = db.prepare("SELECT COUNT(*) as count FROM page_views WHERE created_at >= datetime('now', 'start of day')").get();
+
+  const byPage = db.prepare(
+    `SELECT path, COUNT(*) as count
+     FROM page_views
+     GROUP BY path
+     ORDER BY count DESC`
+  ).all();
+
+  const daily = db.prepare(
+    `SELECT date(created_at) as date, COUNT(*) as count
+     FROM page_views
+     WHERE created_at >= datetime('now', '-30 days')
+     GROUP BY date(created_at)
+     ORDER BY date ASC`
+  ).all();
+
+  res.json({
+    total: total.count,
+    today: today.count,
+    byPage,
+    daily,
+  });
+});
+
 module.exports = router;

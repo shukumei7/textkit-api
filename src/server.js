@@ -6,6 +6,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
 const { errorHandler } = require('./middleware/error-handler');
 const routes = require('./routes');
+const { pageTracker } = require('./middleware/page-tracker');
 
 function createApp() {
   const app = express();
@@ -18,6 +19,9 @@ function createApp() {
 
   app.use(express.json({ limit: '50kb' }));
   app.use(cookieParser());
+
+  // Page view tracking (before static files)
+  app.use(pageTracker);
 
   // Static files
   app.use(express.static(path.join(__dirname, '..', 'public')));

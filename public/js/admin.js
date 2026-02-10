@@ -27,13 +27,15 @@
     const ok = await checkAdmin();
     if (!ok) return;
 
-    const [overviewRes, dailyRes, endpointsRes, tiersRes, usersRes, recentRes] = await Promise.all([
+    const [overviewRes, dailyRes, endpointsRes, tiersRes, usersRes, recentRes, regsRes, pvRes] = await Promise.all([
       fetch('/admin/overview'),
       fetch('/admin/daily'),
       fetch('/admin/endpoints'),
       fetch('/admin/tiers'),
       fetch('/admin/top-users'),
       fetch('/admin/recent'),
+      fetch('/admin/registrations'),
+      fetch('/admin/page-views'),
     ]);
 
     const overview = await overviewRes.json();
@@ -42,6 +44,8 @@
     const tiers = await tiersRes.json();
     const users = await usersRes.json();
     const recent = await recentRes.json();
+    const regs = await regsRes.json();
+    const pv = await pvRes.json();
 
     renderOverview(overview);
     renderDaily(daily.daily);
@@ -49,6 +53,8 @@
     renderTiers(tiers.tiers);
     renderUsers(users.users);
     renderRecent(recent.requests);
+    renderRegistrations(regs);
+    renderPageViews(pv);
   }
 
   function renderOverview(d) {
@@ -136,6 +142,56 @@
         <td>${r.response_time_ms}ms</td>
         <td>${r.tokens_used}</td>
       </tr>`;
+    }).join('');
+  }
+
+  function renderRegistrations(d) {
+    document.getElementById('registeredUsers').textContent = d.total.toLocaleString();
+    document.getElementById('regsLast30').textContent = d.last30Days.toLocaleString();
+    document.getElementById('regsToday').textContent = d.today.toLocaleString();
+
+    const tbody = document.getElementById('regsBody');
+    if (!d.recent.length) {
+      tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-secondary)">No users yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = d.recent.map(r => `<tr>
+      <td>${r.email}</td>
+      <td>${r.name || '—'}</td>
+      <td>${new Date(r.created_at).toLocaleDateString()}</td>
+    </tr>`).join('');
+  }
+
+  function renderPageViews(d) {
+    document.getElementById('pageViewsToday').textContent = d.today.toLocaleString();
+    document.getElementById('pvTotal').textContent = d.total.toLocaleString();
+    document.getElementById('pvToday').textContent = d.today.toLocaleString();
+
+    const tbody = document.getElementById('pvBody');
+    if (!d.byPage.length) {
+      tbody.innerHTML = '<tr><td colspan="2" style="color:var(--text-secondary)">No data yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = d.byPage.map(r => `<tr>
+      <td>${r.path}</td>
+      <td>${r.count.toLocaleString()}</td>
+    </tr>`).join('');
+
+    // Daily chart
+    const el = document.getElementById('pvChart');
+    if (!d.daily.length) {
+      el.innerHTML = '<p style="color:var(--text-secondary)">No data yet.</p>';
+      return;
+    }
+    const max = Math.max(...d.daily.map(r => r.count));
+    el.innerHTML = d.daily.map(r => {
+      const pct = max > 0 ? (r.count / max) * 100 : 0;
+      const label = r.date.slice(5);
+      return `<div class="chart-bar-row">
+        <span class="chart-bar-label">${label}</span>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
+        <span class="chart-bar-value">${r.count}</span>
+      </div>`;
     }).join('');
   }
 
