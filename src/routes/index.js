@@ -6,6 +6,7 @@ const healthRoutes = require('./health');
 const authRoutes = require('./auth');
 const stripeRoutes = require('./stripe');
 const dashboardRoutes = require('./dashboard');
+const adminRoutes = require('./admin');
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.use(healthRoutes);
 router.use(authRoutes);
 router.use(stripeRoutes);
 router.use(dashboardRoutes);
+router.use(adminRoutes);
 
 // API v1 routes (auth + rate-limit + usage tracking)
 const v1 = Router();

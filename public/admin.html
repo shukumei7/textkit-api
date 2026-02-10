@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — TextKit API</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <style>
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .chart-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      font-size: 0.8rem;
+    }
+    .chart-bar-label {
+      width: 70px;
+      text-align: right;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .chart-bar-track {
+      flex: 1;
+      height: 20px;
+      background: var(--bg-input);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .chart-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      min-width: 2px;
+      transition: width 0.3s;
+    }
+    .chart-bar-value {
+      width: 40px;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .status-ok { color: var(--success); }
+    .status-err { color: var(--error); }
+    @media (max-width: 1024px) {
+      .admin-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .admin-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Text<span>Kit</span></a>
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Dashboard</a></li>
+        <li><a href="/docs">Docs</a></li>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <h1>Admin Analytics</h1>
+    <p class="dashboard-subtitle">Platform-wide usage metrics</p>
+
+    <!-- Overview Cards -->
+    <div class="admin-grid">
+      <div class="stat-card">
+        <div class="label">Total Requests</div>
+        <div class="value" id="totalRequests">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Last 30 Days</div>
+        <div class="value" id="last30Days">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Today</div>
+        <div class="value" id="today">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Unique Users</div>
+        <div class="value" id="uniqueUsers">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Total Tokens</div>
+        <div class="value" id="totalTokens">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Error Rate</div>
+        <div class="value" id="errorRate">—</div>
+      </div>
+    </div>
+
+    <!-- Daily Trend -->
+    <div class="section-card">
+      <h2>Daily Requests (Last 30 Days)</h2>
+      <div id="dailyChart">
+        <p style="color:var(--text-secondary)">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Endpoint Breakdown -->
+    <div class="section-card">
+      <h2>Endpoint Breakdown</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Requests</th>
+              <th>Avg Response</th>
+              <th>Error Rate</th>
+              <th>Tokens</th>
+            </tr>
+          </thead>
+          <tbody id="endpointsBody">
+            <tr><td colspan="5" style="color:var(--text-secondary)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tier Distribution -->
+    <div class="section-card">
+      <h2>Tier Distribution</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Requests</th>
+              <th>Share</th>
+            </tr>
+          </thead>
+          <tbody id="tiersBody">
+            <tr><td colspan="3" style="color:var(--text-secondary)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Top Users -->
+    <div class="section-card">
+      <h2>Top Users</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Requests</th>
+              <th>Tokens</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody">
+            <tr><td colspan="3" style="color:var(--text-secondary)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Requests -->
+    <div class="section-card">
+      <h2>Recent Requests</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>User</th>
+              <th>Endpoint</th>
+              <th>Status</th>
+              <th>Response Time</th>
+              <th>Tokens</th>
+            </tr>
+          </thead>
+          <tbody id="recentBody">
+            <tr><td colspan="6" style="color:var(--text-secondary)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer" style="margin-top:40px">
+    <div class="container">
+      <p><a href="/terms.html">Terms of Service</a> &middot; <a href="/privacy.html">Privacy Policy</a></p>
+    </div>
+  </footer>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

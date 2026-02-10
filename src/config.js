@@ -38,6 +38,7 @@ const config = {
     secret: process.env.JWT_SECRET || 'dev-jwt-secret-change-in-production',
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   },
+  adminEmails: (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean),
   nodeEnv: process.env.NODE_ENV || 'development',
 };
 
