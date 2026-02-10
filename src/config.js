@@ -1,9 +1,11 @@
 require('dotenv').config();
 const path = require('path');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const config = {
   dbPath: process.env.DB_PATH || path.join(__dirname, '..', 'db'),
-  port: parseInt(process.env.TEXTKIT_PORT, 10) || 3100,
+  port: parseInt(process.env.TEXTKIT_PORT || process.env.PORT, 10) || 3100,
   openai: {
     apiKey: process.env.OPENAI_API_KEY,
     model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
@@ -19,13 +21,17 @@ const config = {
     MEGA:   { perDay: Infinity, perMinute: 120 },
   },
   stripe: {
-    secretKey: process.env.STRIPE_SECRET_KEY,
-    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    secretKey: isProduction
+      ? process.env.STRIPE_SECRET_KEY
+      : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY),
+    webhookSecret: isProduction
+      ? process.env.STRIPE_WEBHOOK_SECRET
+      : (process.env.STRIPE_TEST_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET),
     prices: {
-      BASIC: process.env.STRIPE_PRICE_BASIC,
-      PRO: process.env.STRIPE_PRICE_PRO,
-      ULTRA: process.env.STRIPE_PRICE_ULTRA,
-      MEGA: process.env.STRIPE_PRICE_MEGA,
+      BASIC: isProduction ? process.env.STRIPE_PRICE_BASIC : (process.env.STRIPE_TEST_PRICE_BASIC || process.env.STRIPE_PRICE_BASIC),
+      PRO: isProduction ? process.env.STRIPE_PRICE_PRO : (process.env.STRIPE_TEST_PRICE_PRO || process.env.STRIPE_PRICE_PRO),
+      ULTRA: isProduction ? process.env.STRIPE_PRICE_ULTRA : (process.env.STRIPE_TEST_PRICE_ULTRA || process.env.STRIPE_PRICE_ULTRA),
+      MEGA: isProduction ? process.env.STRIPE_PRICE_MEGA : (process.env.STRIPE_TEST_PRICE_MEGA || process.env.STRIPE_PRICE_MEGA),
     },
   },
   jwt: {
