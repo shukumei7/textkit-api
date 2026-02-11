@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#12121a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1200" height="4" fill="url(#accent)"/>
+  <text x="100" y="200" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="72" font-weight="800" fill="#e4e4e7">Text<tspan fill="#7c3aed">Kit</tspan> API</text>
+  <text x="100" y="290" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="42" font-weight="400" fill="#a1a1aa">AI-Powered Text Transformation</text>
+  <text x="100" y="400" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="400" fill="#71717a">9 endpoints &middot; Summarize &middot; Rewrite &middot; Repurpose</text>
+  <text x="100" y="445" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="400" fill="#71717a">SEO &middot; Keywords &middot; Tone &middot; Headlines &middot; Compare</text>
+  <text x="100" y="540" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="500" fill="#7c3aed">textkitapi.com</text>
+</svg>

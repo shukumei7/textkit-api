@@ -27,6 +27,13 @@ function auth(req, res, next) {
     });
   }
 
+  // Demo key for public "Try It" widget (BASIC tier, tracked separately)
+  if (apiKey === 'demo') {
+    req.userId = 'demo-user';
+    req.userTier = 'BASIC';
+    return next();
+  }
+
   // Static local key fallback (dev only)
   if (apiKey && apiKey === config.auth.localApiKey) {
     req.userId = 'local-dev';
