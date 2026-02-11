@@ -27,10 +27,10 @@ function auth(req, res, next) {
     });
   }
 
-  // Demo key for public "Try It" widget (BASIC tier, tracked separately)
+  // Demo key for public "Try It" widget (restricted DEMO tier)
   if (apiKey === 'demo') {
     req.userId = 'demo-user';
-    req.userTier = 'BASIC';
+    req.userTier = 'DEMO';
     return next();
   }
 

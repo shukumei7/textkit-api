@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
@@ -11,6 +13,11 @@ const { pageTracker } = require('./middleware/page-tracker');
 function createApp() {
   const app = express();
 
+  // Security headers
+  app.use(helmet({
+    contentSecurityPolicy: false, // CSP breaks Swagger UI inline scripts
+  }));
+
   // Core middleware
   app.use(cors());
 
@@ -19,6 +26,17 @@ function createApp() {
 
   app.use(express.json({ limit: '50kb' }));
   app.use(cookieParser());
+
+  // Brute-force protection on auth routes (15 attempts per 15 min per IP)
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 15,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many attempts', code: 'AUTH_RATE_LIMIT', details: 'Try again in 15 minutes' },
+  });
+  app.use('/auth/login', authLimiter);
+  app.use('/auth/register', authLimiter);
 
   // Page view tracking (before static files)
   app.use(pageTracker);
