@@ -280,7 +280,7 @@
             <option value="rewrite">Rewrite</option>
             <option value="headlines">Headlines</option>
             <option value="extract/keywords">Keywords</option>
-            <option value="translate/tone">Tone Analysis</option>
+            <option value="translate/tone">Rewrite Tone (Formal)</option>
           </select>
           <button class="btn btn-primary" id="demoBtn" onclick="runDemo()">Run</button>
           <span id="demoLoading" style="color:var(--text-muted);font-size:0.85rem;display:none">Processing...</span>
@@ -457,7 +457,7 @@
       const res = await fetch('/api/v1/' + endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': 'demo' },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify(endpoint === 'translate/tone' ? { text, targetTone: 'formal' } : { text }),
       });
       const data = await res.json();
       const elapsed = ((Date.now() - start) / 1000).toFixed(1);
