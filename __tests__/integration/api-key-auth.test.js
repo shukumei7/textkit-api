@@ -182,14 +182,14 @@ describe('API Key Auth Flow', () => {
       db.prepare('DELETE FROM api_keys WHERE user_id = ?').run(userId);
     });
 
-    it('returns 401 INVALID_API_KEY', async () => {
+    it('allows access with FREE tier — no subscription defaults to free', async () => {
       const res = await request(app)
         .post('/api/v1/summarize')
         .set('x-api-key', apiKey)
         .send({ text: SAMPLE_TEXT });
 
-      expect(res.status).toBe(401);
-      expect(res.body.code).toBe('INVALID_API_KEY');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('summary');
     });
   });
 
@@ -211,14 +211,14 @@ describe('API Key Auth Flow', () => {
       db.prepare('DELETE FROM subscriptions WHERE user_id = ?').run(userId);
     });
 
-    it('returns 401 — canceled sub is not active', async () => {
+    it('downgrades to FREE tier — canceled sub loses paid access', async () => {
       const res = await request(app)
         .post('/api/v1/summarize')
         .set('x-api-key', apiKey)
         .send({ text: SAMPLE_TEXT });
 
-      expect(res.status).toBe(401);
-      expect(res.body.code).toBe('INVALID_API_KEY');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('summary');
     });
   });
 
@@ -240,14 +240,14 @@ describe('API Key Auth Flow', () => {
       db.prepare('DELETE FROM subscriptions WHERE user_id = ?').run(userId);
     });
 
-    it('returns 401 — past_due sub is not active', async () => {
+    it('downgrades to FREE tier — past_due sub loses paid access', async () => {
       const res = await request(app)
         .post('/api/v1/summarize')
         .set('x-api-key', apiKey)
         .send({ text: SAMPLE_TEXT });
 
-      expect(res.status).toBe(401);
-      expect(res.body.code).toBe('INVALID_API_KEY');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('summary');
     });
   });
 

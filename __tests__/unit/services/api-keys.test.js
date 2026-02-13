@@ -170,13 +170,13 @@ describe('API Keys Service', () => {
       expect(result.tier).toBe('PRO');
     });
 
-    it('returns null tier when no active subscription', () => {
+    it('returns FREE tier when no active subscription', () => {
       const { key } = createApiKey(userId, 'No Sub Key');
 
       const result = lookupApiKey(key);
       expect(result).not.toBeNull();
       expect(result.userId).toBe(String(userId));
-      expect(result.tier).toBeNull();
+      expect(result.tier).toBe('FREE');
     });
 
     it('returns tier for trialing subscription', () => {
@@ -190,7 +190,7 @@ describe('API Keys Service', () => {
       expect(result.tier).toBe('MEGA');
     });
 
-    it('returns null tier for canceled subscription', () => {
+    it('returns FREE tier for canceled subscription', () => {
       const { key } = createApiKey(userId, 'Canceled Key');
       db.prepare(
         `INSERT INTO subscriptions (user_id, tier, stripe_subscription_id, status)
@@ -198,7 +198,7 @@ describe('API Keys Service', () => {
       ).run(userId, 'PRO', `sub_can_${Date.now()}`, 'canceled');
 
       const result = lookupApiKey(key);
-      expect(result.tier).toBeNull();
+      expect(result.tier).toBe('FREE');
     });
 
     it('returns null for inactive key', () => {

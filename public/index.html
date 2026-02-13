@@ -33,10 +33,10 @@
     "operatingSystem": "Any",
     "offers": {
       "@type": "AggregateOffer",
-      "lowPrice": "9",
+      "lowPrice": "0",
       "highPrice": "199",
       "priceCurrency": "USD",
-      "offerCount": "4"
+      "offerCount": "5"
     },
     "provider": {
       "@type": "Organization",
@@ -231,7 +231,7 @@
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="/docs">Docs</a></li>
         <li><a href="/login.html">Login</a></li>
-        <li><a href="/register.html" class="btn btn-primary btn-sm">Get Started</a></li>
+        <li><a href="/register.html" class="btn btn-primary btn-sm">Start Free</a></li>
       </ul>
     </div>
   </nav>
@@ -241,7 +241,7 @@
       <h1>Ship Text Features<br>in Minutes</h1>
       <p>One API, 9 AI-powered endpoints. Summarize, rewrite, repurpose, analyze tone, extract keywords, optimize SEO — add powerful text features to your app with a single API call.</p>
       <div class="hero-buttons">
-        <a href="/register.html" class="btn btn-primary">Get Your API Key</a>
+        <a href="/register.html" class="btn btn-primary">Start Free — No Credit Card</a>
         <a href="#try-it" class="btn btn-secondary">Try It Live</a>
       </div>
       <div class="hero-badges">
@@ -260,8 +260,8 @@
           <div class="txt">Avg Response</div>
         </div>
         <div class="hero-stat">
-          <div class="num">4</div>
-          <div class="txt">Pricing Tiers</div>
+          <div class="num">Free</div>
+          <div class="txt">Tier Available</div>
         </div>
       </div>
     </div>
@@ -287,6 +287,10 @@
         </div>
         <div class="try-it-result" id="demoResult"></div>
         <div class="try-it-meta" id="demoMeta"></div>
+        <div id="demoCta" style="display:none;margin-top:16px;padding:16px;background:rgba(124,58,237,0.1);border-radius:8px;text-align:center;">
+          <p style="margin:0 0 8px;color:var(--text-primary);font-size:0.95rem;font-weight:500;">Want your own API key? Start with 10 free requests/day.</p>
+          <a href="/register.html" class="btn btn-primary btn-sm">Create Free Account</a>
+        </div>
       </div>
     </div>
   </section>
@@ -359,8 +363,19 @@
   <section class="pricing" id="pricing">
     <div class="container">
       <h2>Simple, Transparent Pricing</h2>
-      <p class="pricing-subtitle">Choose the plan that fits your needs. Upgrade or downgrade anytime.</p>
+      <p class="pricing-subtitle">Start free, upgrade when you're ready. No credit card required.</p>
       <div class="pricing-grid">
+        <div class="pricing-card featured">
+          <h3>Free</h3>
+          <div class="pricing-price">$0<span>/mo</span></div>
+          <ul class="pricing-features">
+            <li>10 requests/day</li>
+            <li>2 requests/minute</li>
+            <li>All 9 endpoints</li>
+            <li>No credit card required</li>
+          </ul>
+          <a href="/register.html" class="btn btn-primary" style="width:100%">Start Free</a>
+        </div>
         <div class="pricing-card">
           <h3>Basic</h3>
           <div class="pricing-price">$9<span>/mo</span></div>
@@ -372,7 +387,7 @@
           </ul>
           <a href="/register.html" class="btn btn-secondary" style="width:100%">Get Started</a>
         </div>
-        <div class="pricing-card featured">
+        <div class="pricing-card">
           <h3>Pro</h3>
           <div class="pricing-price">$29<span>/mo</span></div>
           <ul class="pricing-features">
@@ -381,7 +396,7 @@
             <li>All 9 endpoints</li>
             <li>Priority support</li>
           </ul>
-          <a href="/register.html" class="btn btn-primary" style="width:100%">Get Started</a>
+          <a href="/register.html" class="btn btn-primary" style="width:100%">Choose Plan</a>
         </div>
         <div class="pricing-card">
           <h3>Ultra</h3>
@@ -392,7 +407,7 @@
             <li>All 9 endpoints</li>
             <li>Priority support</li>
           </ul>
-          <a href="/register.html" class="btn btn-secondary" style="width:100%">Get Started</a>
+          <a href="/register.html" class="btn btn-secondary" style="width:100%">Choose Plan</a>
         </div>
         <div class="pricing-card">
           <h3>Mega</h3>
@@ -403,7 +418,7 @@
             <li>All 9 endpoints</li>
             <li>Dedicated support</li>
           </ul>
-          <a href="/register.html" class="btn btn-secondary" style="width:100%">Get Started</a>
+          <a href="/register.html" class="btn btn-secondary" style="width:100%">Choose Plan</a>
         </div>
       </div>
     </div>
@@ -472,6 +487,7 @@
         metaEl.textContent = elapsed + 's · ' + (data.metadata?.tokensUsed || '?') + ' tokens';
       }
       resultEl.classList.add('show');
+      document.getElementById('demoCta').style.display = 'block';
     } catch (err) {
       resultEl.textContent = 'Network error. Please try again.';
       resultEl.classList.add('show');

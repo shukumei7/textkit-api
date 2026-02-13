@@ -62,7 +62,7 @@ function lookupApiKey(rawKey) {
 
   return {
     userId: String(row.user_id),
-    tier: (row.sub_status === 'active' || row.sub_status === 'trialing') ? row.tier : null,
+    tier: (row.sub_status === 'active' || row.sub_status === 'trialing') ? row.tier : 'FREE',
   };
 }
 

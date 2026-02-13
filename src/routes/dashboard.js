@@ -18,16 +18,6 @@ router.get('/dashboard/api-keys', (req, res) => {
 // Create API key
 router.post('/dashboard/api-keys', (req, res) => {
   const { name } = req.body;
-  const sub = getActiveSubscription(req.user.id);
-
-  if (!sub) {
-    return res.status(403).json({
-      error: 'Subscription required',
-      code: 'NO_SUBSCRIPTION',
-      details: 'You need an active subscription to create API keys',
-    });
-  }
-
   const result = createApiKey(req.user.id, name);
   res.status(201).json({
     message: 'API key created. Save it now — it will not be shown again.',

@@ -15,6 +15,7 @@ const config = {
     localApiKey: process.env.LOCAL_API_KEY,
   },
   rateLimits: {
+    FREE:   { perDay: 10,   perMinute: 2 },
     DEMO:   { perDay: 20,   perMinute: 5 },
     BASIC:  { perDay: 100,  perMinute: 10 },
     PRO:    { perDay: 500,  perMinute: 30 },
