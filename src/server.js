@@ -13,6 +13,9 @@ const { pageTracker } = require('./middleware/page-tracker');
 function createApp() {
   const app = express();
 
+  // Trust first proxy (Railway, Render, etc.) for correct IP detection in rate limiting
+  app.set('trust proxy', 1);
+
   // Security headers
   app.use(helmet({
     contentSecurityPolicy: false, // CSP breaks Swagger UI inline scripts
