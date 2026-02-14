@@ -40,7 +40,7 @@ describe('Dashboard Routes Integration Tests', () => {
     // Clean up subscriptions and usage_log for this user before each test
     const db = getDb();
     db.prepare('DELETE FROM subscriptions WHERE user_id = ?').run(testUserId);
-    db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(testUserId);
+    db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(String(testUserId));
   });
 
   afterAll(() => {
@@ -157,6 +157,22 @@ describe('Dashboard Routes Integration Tests', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.usedToday).toBe(2); // Only today's 2 records
+    });
+
+    it('counts usage records stored in SQLite datetime format', async () => {
+      const db = getDb();
+      // Insert record in SQLite datetime format (what the usage middleware actually stores)
+      const sqliteNow = new Date().toISOString().replace('T', ' ').slice(0, 19);
+      db.prepare(
+        'INSERT INTO usage_log (user_id, endpoint, tier, created_at) VALUES (?, ?, ?, ?)'
+      ).run(String(testUserId), '/api/v1/summarize', 'FREE', sqliteNow);
+
+      const res = await request(app)
+        .get('/dashboard/studio/usage')
+        .set('Cookie', [`token=${jwtToken}`]);
+
+      expect(res.status).toBe(200);
+      expect(res.body.usedToday).toBe(1);
     });
   });
 });

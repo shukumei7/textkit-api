@@ -11,7 +11,11 @@ function rateLimit(req, res, next) {
     return res.status(500).json({ error: 'Invalid tier', code: 'INVALID_TIER' });
   }
 
-  // Check per-minute limit (use SQLite datetime to match stored format)
+  // Check per-minute limit
+  // IMPORTANT: Use SQLite datetime() functions instead of JS Date.toISOString()
+  // because formats differ: SQLite uses '2026-02-14 00:00:00' (space separator)
+  // while JS uses '2026-02-14T00:00:00.000Z' (T separator). String comparison
+  // fails because 'T' > ' ' in ASCII, causing rate limits to never trigger.
   const minuteCount = db.prepare(
     "SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at > datetime('now', '-1 minute')"
   ).get(userId);

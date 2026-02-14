@@ -108,6 +108,28 @@ describe('Rate Limit Middleware', () => {
 
       expect(response.status).toBe(200);
     });
+
+    it('correctly counts records stored by usage middleware (SQLite datetime format)', async () => {
+      const userId = 'user-format-test';
+      // Simulate what the usage middleware actually stores: datetime('now') format
+      const sqliteNow = new Date().toISOString().replace('T', ' ').slice(0, 19);
+
+      const stmt = db.prepare(
+        'INSERT INTO usage_log (user_id, endpoint, tier, created_at) VALUES (?, ?, ?, ?)'
+      );
+
+      const limit = config.rateLimits.BASIC.perMinute;
+      for (let i = 0; i < limit; i++) {
+        stmt.run(userId, '/test', 'BASIC', sqliteNow);
+      }
+
+      const response = await request(app)
+        .get('/test')
+        .set('x-test-user', userId)
+        .set('x-test-tier', 'BASIC');
+
+      expect(response.status).toBe(429);
+    });
   });
 
   describe('Per-day rate limits', () => {

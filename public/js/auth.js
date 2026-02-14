@@ -28,7 +28,11 @@
         }
 
         const params = new URLSearchParams(window.location.search);
-        window.location.href = params.get('redirect') || '/dashboard.html';
+        const redirect = params.get('redirect');
+        // Only allow relative paths to prevent open redirect attacks
+        const safeRedirect = (redirect && redirect.startsWith('/') && !redirect.startsWith('//'))
+          ? redirect : '/dashboard.html';
+        window.location.href = safeRedirect;
       } catch (err) {
         showAlert('Network error. Please try again.', 'error');
       }
