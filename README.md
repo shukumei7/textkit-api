@@ -302,6 +302,12 @@ DB_PATH=./data/textkit.db
 - Enable HTTPS with SSL certificate
 - Configure monitoring and logging
 
+**Reverse Proxy Deployment**:
+When deploying behind a reverse proxy (Railway, Render, nginx, etc.), the application includes `app.set('trust proxy', 1)` to correctly identify client IPs from the `X-Forwarded-For` header. This is required for:
+- Rate limiting to work correctly
+- Accurate IP-based analytics
+- Preventing `express-rate-limit` validation errors
+
 ## API Documentation
 
 Interactive API documentation is available via Swagger UI:

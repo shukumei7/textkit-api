@@ -78,6 +78,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting datetime format mismatch causing silent failure (JS `.toISOString()` format `2026-02-14T00:00:00.000Z` didn't match SQLite `datetime('now')` format `2026-02-14 00:00:00` — string comparison failed because `T` > space). Now uses SQLite `datetime()` functions in queries. Nobody was ever rate-limited before this fix.
 - Studio page flash-of-content before auth redirect
 - Back button returning to blank Studio page during auth check (now uses `location.replace()` to prevent back-button issues)
+- Open redirect vulnerability in login redirect parameter (now only allows relative paths starting with `/`)
+- Express-rate-limit `X-Forwarded-For` validation error behind Railway reverse proxy (added `trust proxy` setting)
 
 ### Technical
 - Express 5.x server setup
