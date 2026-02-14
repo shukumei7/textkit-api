@@ -10,6 +10,11 @@ describe('Rate Limit Middleware', () => {
   let app;
   let db;
 
+  // Helper to format dates in SQLite-compatible format (YYYY-MM-DD HH:MM:SS)
+  function sqliteDatetime(date) {
+    return date.toISOString().replace('T', ' ').slice(0, 19);
+  }
+
   beforeAll(() => {
     db = getDb();
   });
@@ -64,7 +69,7 @@ describe('Rate Limit Middleware', () => {
         'INSERT INTO usage_log (user_id, endpoint, tier, created_at) VALUES (?, ?, ?, ?)'
       );
 
-      const now = new Date().toISOString();
+      const now = sqliteDatetime(new Date());
       for (let i = 0; i < limit; i++) {
         stmt.run(userId, '/test', 'BASIC', now);
       }
@@ -84,7 +89,7 @@ describe('Rate Limit Middleware', () => {
 
     it('does not count requests from 61+ seconds ago', async () => {
       const userId = 'user-minute-3';
-      const oldTimestamp = new Date(Date.now() - 61 * 1000).toISOString();
+      const oldTimestamp = sqliteDatetime(new Date(Date.now() - 61 * 1000));
 
       // Insert old usage records (should not count)
       const stmt = db.prepare(
@@ -118,7 +123,7 @@ describe('Rate Limit Middleware', () => {
 
       const count = config.rateLimits.BASIC.perDay - 1;
       for (let i = 0; i < count; i++) {
-        stmt.run(userId, '/test', 'BASIC', dayStart.toISOString());
+        stmt.run(userId, '/test', 'BASIC', sqliteDatetime(dayStart));
       }
 
       // Next request should succeed
@@ -142,7 +147,7 @@ describe('Rate Limit Middleware', () => {
 
       const limit = config.rateLimits.BASIC.perDay;
       for (let i = 0; i < limit; i++) {
-        stmt.run(userId, '/test', 'BASIC', dayStart.toISOString());
+        stmt.run(userId, '/test', 'BASIC', sqliteDatetime(dayStart));
       }
 
       // Next request should be rate limited
@@ -168,7 +173,7 @@ describe('Rate Limit Middleware', () => {
       );
 
       for (let i = 0; i < 200; i++) {
-        stmt.run(userId, '/test', 'BASIC', yesterday.toISOString());
+        stmt.run(userId, '/test', 'BASIC', sqliteDatetime(yesterday));
       }
 
       // Request should succeed because yesterday's records don't count
@@ -191,7 +196,7 @@ describe('Rate Limit Middleware', () => {
       );
 
       for (let i = 0; i < 10000; i++) {
-        stmt.run(userId, '/test', 'MEGA', dayStart.toISOString());
+        stmt.run(userId, '/test', 'MEGA', sqliteDatetime(dayStart));
       }
 
       // Request should still succeed because MEGA has unlimited daily
@@ -214,7 +219,7 @@ describe('Rate Limit Middleware', () => {
         'INSERT INTO usage_log (user_id, endpoint, tier, created_at) VALUES (?, ?, ?, ?)'
       );
 
-      const now = new Date().toISOString();
+      const now = sqliteDatetime(new Date());
       for (let i = 0; i < limit; i++) {
         stmt.run(userId, '/test', 'PRO', now);
       }
@@ -238,7 +243,7 @@ describe('Rate Limit Middleware', () => {
         'INSERT INTO usage_log (user_id, endpoint, tier, created_at) VALUES (?, ?, ?, ?)'
       );
 
-      const now = new Date().toISOString();
+      const now = sqliteDatetime(new Date());
       for (let i = 0; i < limit; i++) {
         stmt.run(userId, '/test', 'ULTRA', now);
       }

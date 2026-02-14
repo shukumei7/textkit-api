@@ -81,11 +81,9 @@ router.get('/dashboard/studio/usage', (req, res) => {
   const tier = (sub && ['active', 'trialing'].includes(sub.status)) ? sub.tier : 'FREE';
   const limits = config.rateLimits[tier];
 
-  const dayStart = new Date();
-  dayStart.setUTCHours(0, 0, 0, 0);
   const dayCount = db.prepare(
-    'SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at >= ?'
-  ).get(userId, dayStart.toISOString());
+    "SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at >= datetime('now', 'start of day')"
+  ).get(userId);
 
   res.json({
     tier,

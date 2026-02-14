@@ -11,11 +11,10 @@ function rateLimit(req, res, next) {
     return res.status(500).json({ error: 'Invalid tier', code: 'INVALID_TIER' });
   }
 
-  // Check per-minute limit
-  const minuteAgo = new Date(Date.now() - 60 * 1000).toISOString();
+  // Check per-minute limit (use SQLite datetime to match stored format)
   const minuteCount = db.prepare(
-    'SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at > ?'
-  ).get(userId, minuteAgo);
+    "SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at > datetime('now', '-1 minute')"
+  ).get(userId);
 
   if (minuteCount.count >= limits.perMinute) {
     return res.status(429).json({
@@ -28,11 +27,9 @@ function rateLimit(req, res, next) {
 
   // Check per-day limit (skip for unlimited)
   if (limits.perDay !== Infinity) {
-    const dayStart = new Date();
-    dayStart.setUTCHours(0, 0, 0, 0);
     const dayCount = db.prepare(
-      'SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at >= ?'
-    ).get(userId, dayStart.toISOString());
+      "SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at >= datetime('now', 'start of day')"
+    ).get(userId);
 
     if (dayCount.count >= limits.perDay) {
       return res.status(429).json({

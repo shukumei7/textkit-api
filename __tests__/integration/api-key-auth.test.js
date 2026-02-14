@@ -27,6 +27,7 @@ describe('API Key Auth Flow', () => {
       // Clean up any leftover keys/subs from previous runs
       db.prepare('DELETE FROM api_keys WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM subscriptions WHERE user_id = ?').run(userId);
+      db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(String(userId));
     } else {
       const result = db.prepare(
         'INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)'
@@ -38,6 +39,7 @@ describe('API Key Auth Flow', () => {
   afterAll(() => {
     // Clean up
     if (db) {
+      db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(String(userId));
       db.prepare('DELETE FROM api_keys WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM subscriptions WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM users WHERE id = ?').run(userId);
@@ -62,6 +64,7 @@ describe('API Key Auth Flow', () => {
     });
 
     afterAll(() => {
+      db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(String(userId));
       db.prepare('DELETE FROM api_keys WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM subscriptions WHERE user_id = ?').run(userId);
     });
@@ -173,6 +176,9 @@ describe('API Key Auth Flow', () => {
     let apiKey;
 
     beforeAll(() => {
+      // Clear any leftover usage from previous tests
+      db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(String(userId));
+
       // Create key but NO subscription
       const result = createApiKey(userId, 'No Sub Key');
       apiKey = result.key;
@@ -197,6 +203,9 @@ describe('API Key Auth Flow', () => {
     let apiKey;
 
     beforeAll(() => {
+      // Clear any leftover usage from previous tests
+      db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(String(userId));
+
       db.prepare(
         `INSERT INTO subscriptions (user_id, tier, stripe_subscription_id, status)
          VALUES (?, ?, ?, ?)`
@@ -226,6 +235,9 @@ describe('API Key Auth Flow', () => {
     let apiKey;
 
     beforeAll(() => {
+      // Clear any leftover usage from previous tests
+      db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(String(userId));
+
       db.prepare(
         `INSERT INTO subscriptions (user_id, tier, stripe_subscription_id, status)
          VALUES (?, ?, ?, ?)`

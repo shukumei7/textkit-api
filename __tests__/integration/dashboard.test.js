@@ -10,6 +10,11 @@ describe('Dashboard Routes Integration Tests', () => {
   let testUserId;
   let jwtToken;
 
+  // Helper to format dates in SQLite-compatible format (YYYY-MM-DD HH:MM:SS)
+  function sqliteDatetime(date) {
+    return date.toISOString().replace('T', ' ').slice(0, 19);
+  }
+
   beforeAll(() => {
     app = createApp();
 
@@ -32,9 +37,10 @@ describe('Dashboard Routes Integration Tests', () => {
   });
 
   beforeEach(() => {
-    // Clean up subscriptions for this user before each test
+    // Clean up subscriptions and usage_log for this user before each test
     const db = getDb();
     db.prepare('DELETE FROM subscriptions WHERE user_id = ?').run(testUserId);
+    db.prepare('DELETE FROM usage_log WHERE user_id = ?').run(testUserId);
   });
 
   afterAll(() => {
@@ -128,7 +134,7 @@ describe('Dashboard Routes Integration Tests', () => {
       // Insert usage records for today
       const dayStart = new Date();
       dayStart.setUTCHours(0, 0, 0, 0);
-      const today = dayStart.toISOString();
+      const today = sqliteDatetime(dayStart);
 
       db.prepare(
         'INSERT INTO usage_log (user_id, endpoint, tier, tokens_used, created_at) VALUES (?, ?, ?, ?, ?)'
@@ -143,7 +149,7 @@ describe('Dashboard Routes Integration Tests', () => {
       yesterday.setDate(yesterday.getDate() - 1);
       db.prepare(
         'INSERT INTO usage_log (user_id, endpoint, tier, tokens_used, created_at) VALUES (?, ?, ?, ?, ?)'
-      ).run(String(testUserId), '/api/v1/summarize', 'FREE', 200, yesterday.toISOString());
+      ).run(String(testUserId), '/api/v1/summarize', 'FREE', 200, sqliteDatetime(yesterday));
 
       const res = await request(app)
         .get('/dashboard/studio/usage')
