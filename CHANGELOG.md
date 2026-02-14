@@ -8,6 +8,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Account Deletion** - Self-service account deletion endpoint (`DELETE /dashboard/account`)
+  - Password-verified deletion for security
+  - Automatically cancels Stripe subscriptions
+  - Deletes all user data (account, API keys, usage logs, subscriptions) in a transaction
+  - Accessible via Dashboard "Account" section
+- **Data Export** - GDPR-compliant data export endpoint (`GET /dashboard/export`)
+  - Downloads JSON file with all user data
+  - Includes account info, API key metadata, usage logs, and subscription history
+  - Excludes sensitive fields (password hashes, Stripe IDs)
+  - Accessible via Dashboard "Account" section
+- **Account Management Service** - New `src/services/account.js` for account lifecycle
+  - Centralized account deletion logic with subscription handling
+  - Data export with privacy-safe field exclusion
+- **Dashboard Account Section** - Added "Account" section to dashboard
+  - "Export My Data" button with JSON download
+  - "Delete My Account" button with password confirmation modal
+- **Privacy Policy Updates** - Enhanced privacy policy for international compliance
+  - GDPR legal basis disclosure (contract performance, legitimate interest, legal obligation)
+  - International data transfers disclosure (OpenAI US, Stripe US)
+  - Expanded data subject rights for EEA (GDPR), California (CCPA), and Canada (PIPEDA)
+  - Page view data collection disclosure
+  - Dashboard self-service link for exercising data rights
+  - Cookie consent exemption note (strictly necessary auth cookie)
 - **TextKit Studio** - Web-based UI for non-technical users at `/studio.html`
   - Interactive forms for all 9 AI text endpoints
   - Real-time usage tracking with tier limits display
@@ -75,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved error messages for authentication failures
 
 ### Fixed
+- Contact email corrected from `support@textkitapp.com` to `support@textkitapi.com` in privacy policy and terms of service
 - Rate limiting datetime format mismatch causing silent failure (JS `.toISOString()` format `2026-02-14T00:00:00.000Z` didn't match SQLite `datetime('now')` format `2026-02-14 00:00:00` — string comparison failed because `T` > space). Now uses SQLite `datetime()` functions in queries. Nobody was ever rate-limited before this fix.
 - Studio page flash-of-content before auth redirect
 - Back button returning to blank Studio page during auth check (now uses `location.replace()` to prevent back-button issues)
