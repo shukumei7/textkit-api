@@ -376,17 +376,18 @@
     return div.innerHTML;
   }
 
-  // Auth check
+  // Auth check — redirect replaces history so back button doesn't return to blank page
   async function checkAuth() {
     try {
       const res = await fetch('/auth/me');
       if (!res.ok) {
-        window.location.href = '/login.html?redirect=/studio.html';
+        window.location.replace('/login.html?redirect=/studio.html');
         return null;
       }
+      document.body.style.visibility = 'visible';
       return await res.json();
     } catch {
-      window.location.href = '/login.html?redirect=/studio.html';
+      window.location.replace('/login.html?redirect=/studio.html');
       return null;
     }
   }
