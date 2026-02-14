@@ -138,6 +138,16 @@
         </table>
       </div>
     </div>
+
+    <!-- Account -->
+    <div class="section-card">
+      <h2>Account</h2>
+      <p style="color:var(--text-secondary);margin-bottom:16px">Manage your account data and privacy settings.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-secondary" id="exportDataBtn">Export My Data</button>
+        <button class="btn btn-danger" id="deleteAccountBtn">Delete My Account</button>
+      </div>
+    </div>
   </div>
 
   <footer class="footer" style="margin-top:40px">
@@ -171,6 +181,25 @@
         <div style="display:flex;gap:8px">
           <button type="submit" class="btn btn-primary">Create</button>
           <button type="button" class="btn btn-secondary" onclick="document.getElementById('createKeyModal').classList.remove('show')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Account Modal -->
+  <div class="modal-overlay" id="deleteAccountModal">
+    <div class="modal">
+      <h3>Delete Your Account</h3>
+      <p style="color:var(--text-secondary);margin-bottom:16px">This action is permanent and cannot be undone. All your data, API keys, and subscriptions will be deleted.</p>
+      <form id="deleteAccountForm">
+        <div class="form-group">
+          <label for="deletePassword">Enter your password to confirm</label>
+          <input type="password" id="deletePassword" required placeholder="Your password">
+        </div>
+        <p id="deleteError" style="color:#ef4444;display:none;margin-bottom:12px"></p>
+        <div style="display:flex;gap:8px">
+          <button type="submit" class="btn btn-danger">Permanently Delete</button>
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('deleteAccountModal').classList.remove('show')">Cancel</button>
         </div>
       </form>
     </div>

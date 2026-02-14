@@ -183,6 +183,40 @@
     if (data.url) window.location.href = data.url;
   };
 
+  // Export data — triggers browser download
+  document.getElementById('exportDataBtn').addEventListener('click', () => {
+    window.location.href = '/dashboard/export';
+  });
+
+  // Delete account — show modal
+  document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+    document.getElementById('deleteError').style.display = 'none';
+    document.getElementById('deletePassword').value = '';
+    document.getElementById('deleteAccountModal').classList.add('show');
+  });
+
+  document.getElementById('deleteAccountForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const password = document.getElementById('deletePassword').value;
+    const errorEl = document.getElementById('deleteError');
+    errorEl.style.display = 'none';
+
+    const res = await fetch('/dashboard/account', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      errorEl.textContent = data.error || 'Failed to delete account';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    window.location.replace('/?account_deleted=1');
+  });
+
   // Init
   loadDashboard();
 })();

@@ -63,6 +63,7 @@
       <li><strong>Password</strong> — Stored as a bcrypt hash, never in plain text</li>
       <li><strong>Stripe customer ID</strong> — Generated when you create a subscription</li>
       <li><strong>API usage logs</strong> — Including endpoint accessed, timestamp, and tokens used</li>
+      <li><strong>Page view data</strong> — We log the page path and referrer URL for basic analytics. This data is anonymous and not linked to your account.</li>
       <li><strong>Session cookies</strong> — A single httpOnly JWT cookie for authentication</li>
     </ul>
 
@@ -76,6 +77,14 @@
       <li>Communicating service updates, billing issues, or security notifications</li>
     </ul>
 
+    <h2>Legal Basis for Processing (GDPR)</h2>
+    <p>If you are located in the European Economic Area (EEA), we process your personal data under the following legal bases:</p>
+    <ul>
+      <li><strong>Contract performance</strong> — Processing your account data, API usage, and billing is necessary to provide the service you signed up for</li>
+      <li><strong>Legitimate interest</strong> — Anonymous page view analytics and service improvement, where our interest does not override your rights</li>
+      <li><strong>Legal obligation</strong> — Retaining billing records as required by tax and financial regulations</li>
+    </ul>
+
     <h2>Third-Party Services</h2>
     <p>We share limited data with the following third-party services:</p>
     <ul>
@@ -84,7 +93,15 @@
     </ul>
     <p>Neither service receives your password. Stripe and OpenAI operate under their own privacy policies.</p>
 
-    <h2>Data Storage & Security</h2>
+    <h2>International Data Transfers</h2>
+    <p>Your data may be transferred to and processed in countries other than your own, including the United States, where our third-party service providers operate:</p>
+    <ul>
+      <li><strong>OpenAI</strong> (United States) — Processes your submitted text content</li>
+      <li><strong>Stripe</strong> (United States) — Processes your payment and billing data</li>
+    </ul>
+    <p>These providers maintain appropriate safeguards for international data transfers, including Standard Contractual Clauses (SCCs) and Data Processing Agreements (DPAs) where required by applicable law.</p>
+
+    <h2>Data Storage &amp; Security</h2>
     <p>Your data is stored in a SQLite database on secure servers. We implement the following security measures:</p>
     <ul>
       <li>Passwords are hashed using bcrypt and never stored in plain text</li>
@@ -100,24 +117,48 @@
       <li>HttpOnly and secure (HTTPS-only in production)</li>
       <li>Used solely for authentication, not tracking</li>
     </ul>
-    <p>We do not use analytics cookies, tracking cookies, or third-party cookies.</p>
+    <p>We do not use analytics cookies, tracking cookies, or third-party cookies. Because our only cookie is strictly necessary for authentication, no cookie consent banner is required under GDPR/ePrivacy regulations.</p>
 
     <h2>Data Retention</h2>
     <ul>
       <li><strong>Account data</strong> — Retained until you request deletion of your account</li>
       <li><strong>API usage logs</strong> — Retained for 90 days, then automatically deleted</li>
+      <li><strong>Page view data</strong> — Retained for analytics purposes; anonymous and not linked to accounts</li>
       <li><strong>Stripe billing records</strong> — Maintained by Stripe according to their retention policy</li>
     </ul>
 
     <h2>Your Rights</h2>
-    <p>Under PIPEDA (Canada's Personal Information Protection and Electronic Documents Act), you have the right to:</p>
+
+    <h3 style="font-size:1.1rem;margin-top:24px">For EEA Residents (GDPR)</h3>
+    <p>Under the General Data Protection Regulation, you have the right to:</p>
+    <ul>
+      <li>Access your personal data</li>
+      <li>Rectify inaccurate personal data</li>
+      <li>Request erasure of your personal data ("right to be forgotten")</li>
+      <li>Restrict or object to processing of your personal data</li>
+      <li>Data portability — receive your data in a structured, machine-readable format</li>
+      <li>Lodge a complaint with your local data protection authority</li>
+    </ul>
+
+    <h3 style="font-size:1.1rem;margin-top:24px">For California Residents (CCPA)</h3>
+    <p>Under the California Consumer Privacy Act, you have the right to:</p>
+    <ul>
+      <li>Know what personal information we collect and how it is used</li>
+      <li>Request deletion of your personal information</li>
+      <li>Opt out of the sale of your personal information — we do not sell your data</li>
+      <li>Non-discrimination for exercising your privacy rights</li>
+    </ul>
+
+    <h3 style="font-size:1.1rem;margin-top:24px">For Canadian Residents (PIPEDA)</h3>
+    <p>Under Canada's Personal Information Protection and Electronic Documents Act, you have the right to:</p>
     <ul>
       <li>Access your personal data</li>
       <li>Request correction of inaccurate data</li>
       <li>Request deletion of your data</li>
       <li>Withdraw consent for data processing</li>
     </ul>
-    <p>To exercise these rights, email us at support@textkitapp.com. We will respond within 30 days.</p>
+
+    <p style="margin-top:24px">You can exercise your data rights directly from your <a href="/dashboard.html">Dashboard</a> using the "Export My Data" and "Delete My Account" options. For other requests, email us at support@textkitapi.com. We will respond within 30 days.</p>
 
     <h2>Children's Privacy</h2>
     <p>TextKit API is not intended for use by anyone under the age of 18. We do not knowingly collect personal information from children.</p>
@@ -126,7 +167,7 @@
     <p>We may update this Privacy Policy at any time. We will notify you of material changes by email or through a notice on our website. Your continued use of the service after such changes constitutes your acceptance of the updated policy.</p>
 
     <h2>Contact</h2>
-    <p>Questions about this policy? Email us at support@textkitapp.com.</p>
+    <p>Questions about this policy? Email us at support@textkitapi.com.</p>
   </div>
 
   <footer class="footer">

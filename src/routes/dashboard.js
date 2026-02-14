@@ -4,6 +4,7 @@ const { createApiKey, listApiKeys, deleteApiKey } = require('../services/api-key
 const { getActiveSubscription } = require('../services/subscription');
 const { getDb } = require('../db');
 const config = require('../config');
+const { deleteAccount, exportUserData } = require('../services/account');
 
 const router = Router();
 
@@ -91,6 +92,33 @@ router.get('/dashboard/studio/usage', (req, res) => {
     limitToday: limits.perDay === Infinity ? null : limits.perDay,
     limitPerMinute: limits.perMinute,
   });
+});
+
+// Delete account
+router.delete('/dashboard/account', async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required' });
+    }
+    await deleteAccount(req.user.id, password);
+    res.clearCookie('token');
+    res.json({ message: 'Account deleted successfully' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Export user data
+router.get('/dashboard/export', async (req, res, next) => {
+  try {
+    const data = await exportUserData(req.user.id);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename="textkit-data-export.json"');
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;
