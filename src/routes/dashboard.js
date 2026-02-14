@@ -3,6 +3,7 @@ const { jwtAuth } = require('../middleware/jwt-auth');
 const { createApiKey, listApiKeys, deleteApiKey } = require('../services/api-keys');
 const { getActiveSubscription } = require('../services/subscription');
 const { getDb } = require('../db');
+const config = require('../config');
 
 const router = Router();
 
@@ -62,6 +63,36 @@ router.get('/dashboard/usage', (req, res) => {
   ).all(userId);
 
   res.json({ stats, daily });
+});
+
+/**
+ * Get Studio usage statistics
+ * Returns the user's current tier, today's usage count, and rate limits.
+ * Used by TextKit Studio (/studio.html) to display real-time usage tracking.
+ *
+ * @route GET /dashboard/studio/usage
+ * @returns {Object} Usage data - { tier, usedToday, limitToday, limitPerMinute }
+ */
+router.get('/dashboard/studio/usage', (req, res) => {
+  const db = getDb();
+  const userId = String(req.user.id);
+
+  const sub = getActiveSubscription(req.user.id);
+  const tier = (sub && ['active', 'trialing'].includes(sub.status)) ? sub.tier : 'FREE';
+  const limits = config.rateLimits[tier];
+
+  const dayStart = new Date();
+  dayStart.setUTCHours(0, 0, 0, 0);
+  const dayCount = db.prepare(
+    'SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at >= ?'
+  ).get(userId, dayStart.toISOString());
+
+  res.json({
+    tier,
+    usedToday: dayCount.count,
+    limitToday: limits.perDay === Infinity ? null : limits.perDay,
+    limitPerMinute: limits.perMinute,
+  });
 });
 
 module.exports = router;

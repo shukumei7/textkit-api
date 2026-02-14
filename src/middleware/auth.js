@@ -1,5 +1,7 @@
 const config = require('../config');
 const { lookupApiKey } = require('../services/api-keys');
+const { verifyToken, getUserById } = require('../services/auth');
+const { getActiveSubscription } = require('../services/subscription');
 
 function auth(req, res, next) {
   // RapidAPI proxy-secret authentication (primary)
@@ -46,6 +48,22 @@ function auth(req, res, next) {
     req.userId = req.headers['x-test-user'] || 'test-user';
     req.userTier = req.headers['x-test-tier'] || 'MEGA';
     return next();
+  }
+
+  // JWT cookie auth (for Studio web app and dashboard)
+  // This allows web users to make authenticated API calls via cookie instead of API key header
+  const token = req.cookies?.token;
+  if (token) {
+    try {
+      const payload = verifyToken(token);
+      const user = getUserById(payload.userId);
+      if (user) {
+        const sub = getActiveSubscription(user.id);
+        req.userId = String(user.id);
+        req.userTier = (sub && ['active', 'trialing'].includes(sub.status)) ? sub.tier : 'FREE';
+        return next();
+      }
+    } catch (err) { /* fall through to 401 */ }
   }
 
   return res.status(401).json({

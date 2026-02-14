@@ -27,7 +27,8 @@
           return;
         }
 
-        window.location.href = '/dashboard.html';
+        const params = new URLSearchParams(window.location.search);
+        window.location.href = params.get('redirect') || '/dashboard.html';
       } catch (err) {
         showAlert('Network error. Please try again.', 'error');
       }

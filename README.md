@@ -37,8 +37,23 @@ The API will be available at `http://localhost:3100`
 | POST | `/api/v1/compare` | Compare two texts across multiple aspects |
 | GET | `/health` | Basic health check (no auth) |
 | GET | `/status` | Detailed service status (no auth) |
+| GET | `/dashboard/studio/usage` | Get usage stats for Studio interface (JWT auth) |
 
 ## Authentication
+
+### JWT Cookie (Web Application)
+
+The web dashboard and Studio interface use JWT cookie authentication. After logging in via `/login.html`, a secure JWT cookie is set that authenticates all subsequent requests to dashboard and Studio endpoints.
+
+**Endpoints using JWT auth:**
+- `/dashboard/*` - Dashboard endpoints
+- `/studio.html` - TextKit Studio interface
+
+**Cookie details:**
+- Name: `token`
+- HttpOnly: Yes (in production)
+- SameSite: Strict
+- Expires: 7 days
 
 ### Production (RapidAPI)
 
@@ -61,6 +76,23 @@ curl -X POST http://localhost:3100/api/v1/summarize \
   -H "Content-Type: application/json" \
   -d '{"text": "Your long text here...", "length": "brief"}'
 ```
+
+## TextKit Studio
+
+TextKit Studio is a web-based UI for non-technical users to access all 9 AI text endpoints without coding.
+
+**Features:**
+- Interactive forms for all API endpoints
+- Real-time usage tracking with tier limits
+- Visual endpoint selection with descriptions
+- JWT cookie authentication (same login as dashboard)
+- No API key management required
+
+**Access:**
+After logging in at `/login.html`, navigate to `/studio.html` to use the Studio interface.
+
+**Usage Tracking:**
+Studio displays your current tier, today's usage count, and remaining requests. Usage updates in real-time as you make API calls.
 
 ## Rate Limits
 

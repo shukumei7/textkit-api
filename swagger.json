@@ -20,6 +20,9 @@
     },
     {
       "ApiKey": []
+    },
+    {
+      "JwtCookie": []
     }
   ],
   "paths": {
@@ -819,6 +822,59 @@
         }
       }
     },
+    "/dashboard/studio/usage": {
+      "get": {
+        "summary": "Get Studio usage stats",
+        "description": "Returns current user's tier, today's usage count, and rate limits for TextKit Studio interface",
+        "tags": ["Dashboard"],
+        "security": [
+          {
+            "JwtCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage statistics retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tier": {
+                      "type": "string",
+                      "enum": ["FREE", "BASIC", "PRO", "ULTRA", "MEGA"],
+                      "description": "Current subscription tier"
+                    },
+                    "usedToday": {
+                      "type": "integer",
+                      "description": "Number of API calls made today"
+                    },
+                    "limitToday": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Daily request limit (null for unlimited)"
+                    },
+                    "limitPerMinute": {
+                      "type": "integer",
+                      "description": "Per-minute request limit"
+                    }
+                  }
+                },
+                "example": {
+                  "tier": "PRO",
+                  "usedToday": 42,
+                  "limitToday": 500,
+                  "limitPerMinute": 30
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
     "/api/v1/compare": {
       "post": {
         "summary": "Compare texts",
@@ -943,6 +999,12 @@
         "in": "header",
         "name": "X-Api-Key",
         "description": "Local API key for development authentication"
+      },
+      "JwtCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "token",
+        "description": "JWT token cookie for web application authentication (used by TextKit Studio)"
       }
     },
     "responses": {
@@ -1069,6 +1131,10 @@
     {
       "name": "Analysis",
       "description": "Text analysis and comparison"
+    },
+    {
+      "name": "Dashboard",
+      "description": "User dashboard and Studio interface endpoints"
     }
   ]
 }
