@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TextKit</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- Login View -->
+  <div id="loginView" class="view">
+    <div class="logo">TK</div>
+    <h1>TextKit</h1>
+    <p class="subtitle">AI-powered text tools</p>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email" required autocomplete="email">
+      <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+      <button type="submit" id="loginBtn">Log In</button>
+      <div id="loginError" class="error" hidden></div>
+    </form>
+    <p class="footer-link">
+      No account? <a href="https://www.textkitapi.com/register.html" target="_blank">Sign up</a>
+    </p>
+  </div>
+
+  <!-- Dashboard View -->
+  <div id="dashView" class="view" hidden>
+    <div class="header">
+      <div class="logo-sm">TK</div>
+      <div class="user-info">
+        <span id="userEmail"></span>
+        <span id="userTier" class="tier-badge"></span>
+      </div>
+    </div>
+    <div class="usage-card">
+      <h2>Today's Usage</h2>
+      <div class="usage-bar-container">
+        <div id="usageBar" class="usage-bar"></div>
+      </div>
+      <div class="usage-text">
+        <span id="usageCount">0</span> / <span id="usageLimit">0</span> requests
+      </div>
+    </div>
+    <div class="actions">
+      <a href="https://www.textkitapi.com/dashboard.html" target="_blank" class="action-link">Dashboard</a>
+      <a href="https://www.textkitapi.com/studio.html" target="_blank" class="action-link">Studio</a>
+      <button id="logoutBtn" class="action-link logout">Log Out</button>
+    </div>
+    <p class="hint">Select text on any page, right-click, and choose a TextKit tool.</p>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

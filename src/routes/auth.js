@@ -37,6 +37,7 @@ router.post('/auth/register', async (req, res, next) => {
     res.status(201).json({
       message: 'Account created',
       user: { id: user.id, email: user.email, name: user.name },
+      token,
     });
   } catch (err) {
     if (err.status) {
@@ -71,6 +72,7 @@ router.post('/auth/login', async (req, res, next) => {
     res.json({
       message: 'Logged in',
       user: { id: user.id, email: user.email, name: user.name },
+      token,
     });
   } catch (err) {
     if (err.status) {

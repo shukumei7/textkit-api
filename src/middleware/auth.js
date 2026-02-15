@@ -43,6 +43,28 @@ function auth(req, res, next) {
     return next();
   }
 
+  // Bearer JWT token auth (for Chrome extension and external clients)
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7);
+    try {
+      const payload = verifyToken(token);
+      const user = getUserById(payload.userId);
+      if (user) {
+        const sub = getActiveSubscription(user.id);
+        req.userId = String(user.id);
+        req.userTier = (sub && ['active', 'trialing'].includes(sub.status)) ? sub.tier : 'FREE';
+        return next();
+      }
+    } catch (err) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        code: 'INVALID_TOKEN',
+        details: 'Invalid or expired Bearer token',
+      });
+    }
+  }
+
   // Test bypass
   if (config.nodeEnv === 'test' && req.headers['x-test-auth'] === 'bypass') {
     req.userId = req.headers['x-test-user'] || 'test-user';
