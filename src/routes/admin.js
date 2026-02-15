@@ -96,6 +96,7 @@ router.get('/admin/top-users', (req, res) => {
 // Recent requests
 router.get('/admin/recent', (req, res) => {
   const db = getDb();
+  const limit = Math.min(parseInt(req.query.limit, 10) || 20, 500);
   const rows = db.prepare(
     `SELECT
        ul.created_at,
@@ -109,9 +110,19 @@ router.get('/admin/recent', (req, res) => {
      FROM usage_log ul
      LEFT JOIN users u ON ul.user_id = CAST(u.id AS TEXT)
      ORDER BY ul.id DESC
-     LIMIT 20`
-  ).all();
+     LIMIT ?`
+  ).all(limit);
   res.json({ requests: rows });
+});
+
+// Purge test data (usage_log entries with no matching user)
+router.delete('/admin/test-data', (req, res) => {
+  const db = getDb();
+  const result = db.prepare(
+    `DELETE FROM usage_log
+     WHERE user_id NOT IN (SELECT CAST(id AS TEXT) FROM users)`
+  ).run();
+  res.json({ deleted: result.changes });
 });
 
 // Registration stats
