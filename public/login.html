@@ -8,6 +8,7 @@
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">Text<span>Kit</span></a>
@@ -18,19 +19,19 @@
     </div>
   </nav>
 
-  <div class="auth-page">
+  <main id="main-content" class="auth-page">
     <div class="auth-card">
       <h1>Welcome back</h1>
       <p class="subtitle">Sign in to your TextKit account</p>
-      <div id="alert" class="alert"></div>
+      <div id="alert" class="alert" role="alert" aria-live="assertive"></div>
       <form id="loginForm">
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required placeholder="you@example.com">
+          <input type="email" id="email" name="email" required aria-required="true" placeholder="you@example.com">
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="Your password">
+          <input type="password" id="password" name="password" required aria-required="true" placeholder="Your password">
         </div>
         <button type="submit" class="btn btn-primary" style="width:100%">Sign In</button>
       </form>
@@ -38,7 +39,7 @@
         Don't have an account? <a href="/register.html">Create one</a>
       </p>
     </div>
-  </div>
+  </main>
 
   <footer class="footer" style="margin-top:0">
     <div class="container">

@@ -8,6 +8,7 @@
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">Text<span>Kit</span></a>
@@ -18,11 +19,11 @@
     </div>
   </nav>
 
-  <div class="auth-page">
+  <main id="main-content" class="auth-page">
     <div class="auth-card">
       <h1>Create your account</h1>
       <p class="subtitle">Start using TextKit API in minutes</p>
-      <div id="alert" class="alert"></div>
+      <div id="alert" class="alert" role="alert" aria-live="assertive"></div>
       <form id="registerForm">
         <div class="form-group">
           <label for="name">Name (optional)</label>
@@ -30,11 +31,11 @@
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required placeholder="you@example.com">
+          <input type="email" id="email" name="email" required aria-required="true" placeholder="you@example.com">
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="At least 8 characters" minlength="8">
+          <input type="password" id="password" name="password" required aria-required="true" placeholder="At least 8 characters" minlength="8">
         </div>
         <button type="submit" class="btn btn-primary" style="width:100%">Create Account</button>
         <p class="form-footer" style="margin-top:12px;font-size:0.8rem">By creating an account, you agree to our <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a>.</p>
@@ -43,7 +44,7 @@
         Already have an account? <a href="/login.html">Sign in</a>
       </p>
     </div>
-  </div>
+  </main>
 
   <footer class="footer" style="margin-top:0">
     <div class="container">

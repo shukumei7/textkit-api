@@ -1,4 +1,72 @@
 (function() {
+  // Modal accessibility utility
+  function initModalA11y(modalId) {
+    const modal = document.getElementById(modalId);
+    let lastFocusedElement = null;
+
+    function getFocusableElements() {
+      return modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    }
+
+    function open() {
+      lastFocusedElement = document.activeElement;
+      modal.classList.add('show');
+
+      // Focus first focusable element
+      const focusable = getFocusableElements();
+      if (focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }
+
+    function close() {
+      modal.classList.remove('show');
+      if (lastFocusedElement) {
+        lastFocusedElement.focus();
+      }
+    }
+
+    // ESC key to close
+    modal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        close();
+      }
+
+      // Focus trap
+      if (e.key === 'Tab') {
+        const focusable = Array.from(getFocusableElements());
+        if (focusable.length === 0) return;
+
+        const firstFocusable = focusable[0];
+        const lastFocusable = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      }
+    });
+
+    // Click outside to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        close();
+      }
+    });
+
+    return { open, close };
+  }
+
+  // Initialize session modal
+  const sessionModalA11y = initModalA11y('sessionModal');
+
   // Global state
   let currentTool = null;
   let lastResult = null;
@@ -587,7 +655,7 @@
 
       if (res.status === 401) {
         // Session expired
-        document.getElementById('sessionModal').classList.add('show');
+        sessionModalA11y.open();
         return;
       }
 
@@ -755,6 +823,55 @@
     setTimeout(() => {
       toast.classList.remove('show');
     }, duration);
+  }
+
+  // Voice dictation via Web Speech API
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    const dictateBtn = document.getElementById('dictateBtn');
+    dictateBtn.style.display = '';
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+    let isRecording = false;
+
+    dictateBtn.addEventListener('click', () => {
+      if (isRecording) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    });
+
+    recognition.onstart = () => {
+      isRecording = true;
+      dictateBtn.textContent = 'Stop Dictating';
+      dictateBtn.classList.replace('btn-secondary', 'btn-primary');
+    };
+
+    recognition.onend = () => {
+      isRecording = false;
+      dictateBtn.textContent = 'Dictate';
+      dictateBtn.classList.replace('btn-primary', 'btn-secondary');
+    };
+
+    recognition.onresult = (event) => {
+      const textarea = document.getElementById('studioInput');
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          const text = event.results[i][0].transcript;
+          textarea.value += (textarea.value ? ' ' : '') + text.trim();
+        }
+      }
+    };
+
+    recognition.onerror = (event) => {
+      if (event.error === 'not-allowed') {
+        alert('Microphone access denied. Please allow microphone in browser settings.');
+      }
+    };
   }
 
   // Init

@@ -223,6 +223,7 @@
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">Text<span>Kit</span></a>
@@ -237,6 +238,7 @@
     </div>
   </nav>
 
+  <main id="main-content">
   <section class="hero">
     <div class="container">
       <h1>Ship Text Features<br>in Minutes</h1>
@@ -274,8 +276,10 @@
       <h2>Try It Live</h2>
       <p class="try-it-subtitle">Paste any text below and see TextKit in action. No API key needed.</p>
       <div class="try-it-box">
+        <label for="demoInput" class="sr-only">Demo input text</label>
         <textarea id="demoInput" placeholder="Paste an article, email, or any text here...">Artificial intelligence has transformed the way businesses operate. From automating customer service with chatbots to generating marketing copy at scale, AI tools are becoming essential for companies of all sizes. The key challenge remains integration — most teams don't have the resources to build AI features from scratch, which is why API-first solutions are gaining traction rapidly.</textarea>
         <div class="try-it-controls">
+          <label for="demoEndpoint" class="sr-only">Choose endpoint</label>
           <select id="demoEndpoint">
             <option value="summarize">Summarize</option>
             <option value="rewrite">Rewrite</option>
@@ -431,7 +435,7 @@
       <h2>Start Building in 30 Seconds</h2>
       <p>Get your API key and make your first call. It's that simple.</p>
       <a href="/register.html" class="btn btn-primary">Get Your Free API Key</a>
-      <div class="code-snippet">
+      <div class="code-snippet" role="figure" aria-label="Example API call using JavaScript fetch">
         <span class="cmt">// That's it. One call.</span><br>
         <span class="kw">const</span> res = <span class="kw">await</span> <span class="kw">fetch</span>(<span class="str">'https://www.textkitapi.com/api/v1/summarize'</span>, {<br>
         &nbsp;&nbsp;method: <span class="str">'POST'</span>,<br>
@@ -444,6 +448,7 @@
       </div>
     </div>
   </section>
+  </main>
 
   <footer class="footer">
     <div class="container">

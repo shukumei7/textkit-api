@@ -1,4 +1,78 @@
 (function() {
+  // Modal accessibility utility
+  function initModalA11y(modalId) {
+    const modal = document.getElementById(modalId);
+    let lastFocusedElement = null;
+
+    function getFocusableElements() {
+      return modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    }
+
+    function open() {
+      lastFocusedElement = document.activeElement;
+      modal.classList.add('show');
+
+      // Focus first focusable element
+      const focusable = getFocusableElements();
+      if (focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }
+
+    function close() {
+      modal.classList.remove('show');
+      if (lastFocusedElement) {
+        lastFocusedElement.focus();
+      }
+    }
+
+    // ESC key to close
+    modal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        close();
+      }
+
+      // Focus trap
+      if (e.key === 'Tab') {
+        const focusable = Array.from(getFocusableElements());
+        if (focusable.length === 0) return;
+
+        const firstFocusable = focusable[0];
+        const lastFocusable = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      }
+    });
+
+    // Click outside to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        close();
+      }
+    });
+
+    return { open, close };
+  }
+
+  // Initialize modals
+  const newKeyModalA11y = initModalA11y('newKeyModal');
+  const createKeyModalA11y = initModalA11y('createKeyModal');
+  const deleteAccountModalA11y = initModalA11y('deleteAccountModal');
+
+  window.closeNewKeyModal = () => newKeyModalA11y.close();
+  window.closeCreateKeyModal = () => createKeyModalA11y.close();
+  window.closeDeleteAccountModal = () => deleteAccountModalA11y.close();
+
   // Check auth — redirect if not logged in
   async function checkAuth() {
     try {
@@ -121,13 +195,13 @@
 
   // Create key
   document.getElementById('createKeyBtn').addEventListener('click', () => {
-    document.getElementById('createKeyModal').classList.add('show');
+    createKeyModalA11y.open();
   });
 
   document.getElementById('createKeyForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('keyName').value;
-    document.getElementById('createKeyModal').classList.remove('show');
+    createKeyModalA11y.close();
 
     const res = await fetch('/dashboard/api-keys', {
       method: 'POST',
@@ -143,7 +217,7 @@
     }
 
     document.getElementById('newKeyDisplay').textContent = data.key;
-    document.getElementById('newKeyModal').classList.add('show');
+    newKeyModalA11y.open();
 
     // Refresh keys list
     const keysRes = await fetch('/dashboard/api-keys');
@@ -157,9 +231,6 @@
     navigator.clipboard.writeText(key);
   };
 
-  window.closeModal = function() {
-    document.getElementById('newKeyModal').classList.remove('show');
-  };
 
   // Delete key
   window.deleteKey = async function(id) {
@@ -192,7 +263,7 @@
   document.getElementById('deleteAccountBtn').addEventListener('click', () => {
     document.getElementById('deleteError').style.display = 'none';
     document.getElementById('deletePassword').value = '';
-    document.getElementById('deleteAccountModal').classList.add('show');
+    deleteAccountModalA11y.open();
   });
 
   document.getElementById('deleteAccountForm').addEventListener('submit', async (e) => {

@@ -12,7 +12,7 @@
   --bg-input: #1a1a25;
   --text-primary: #e4e4e7;
   --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --text-muted: #9ca3af;
   --accent: #7c3aed;
   --accent-hover: #6d28d9;
   --accent-light: rgba(124, 58, 237, 0.1);
@@ -543,4 +543,57 @@ th {
   .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
   .dashboard-grid { grid-template-columns: 1fr; }
   .nav-links { gap: 16px; }
+}
+
+/* Accessibility: Focus-visible */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Accessibility: Skip link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  z-index: 1000;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Accessibility: Screen-reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

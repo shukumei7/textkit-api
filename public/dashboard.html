@@ -8,6 +8,7 @@
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">Text<span>Kit</span></a>
@@ -19,7 +20,7 @@
     </div>
   </nav>
 
-  <div class="dashboard">
+  <main id="main-content" class="dashboard">
     <h1>Dashboard</h1>
     <p class="dashboard-subtitle" id="welcomeText">Welcome back</p>
 
@@ -103,14 +104,15 @@
       </h2>
       <div class="table-wrap">
         <table>
+          <caption class="sr-only">Your API keys</caption>
           <thead>
             <tr>
-              <th>Key</th>
-              <th>Name</th>
-              <th>Status</th>
-              <th>Created</th>
-              <th>Last Used</th>
-              <th></th>
+              <th scope="col">Key</th>
+              <th scope="col">Name</th>
+              <th scope="col">Status</th>
+              <th scope="col">Created</th>
+              <th scope="col">Last Used</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody id="keysTableBody">
@@ -125,11 +127,12 @@
       <h2>Usage (Last 30 Days)</h2>
       <div class="table-wrap">
         <table>
+          <caption class="sr-only">Usage statistics for last 30 days</caption>
           <thead>
             <tr>
-              <th>Endpoint</th>
-              <th>Requests</th>
-              <th>Tokens Used</th>
+              <th scope="col">Endpoint</th>
+              <th scope="col">Requests</th>
+              <th scope="col">Tokens Used</th>
             </tr>
           </thead>
           <tbody id="usageTableBody">
@@ -148,7 +151,7 @@
         <button class="btn btn-danger" id="deleteAccountBtn">Delete My Account</button>
       </div>
     </div>
-  </div>
+  </main>
 
   <footer class="footer" style="margin-top:40px">
     <div class="container">
@@ -157,22 +160,22 @@
   </footer>
 
   <!-- New Key Modal -->
-  <div class="modal-overlay" id="newKeyModal">
+  <div class="modal-overlay" id="newKeyModal" role="dialog" aria-modal="true" aria-labelledby="newKeyModalTitle">
     <div class="modal">
-      <h3>New API Key Created</h3>
+      <h3 id="newKeyModalTitle">New API Key Created</h3>
       <p class="key-warning">Copy this key now. You won't be able to see it again.</p>
       <div class="key-display" id="newKeyDisplay"></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-primary" onclick="copyKey()">Copy</button>
-        <button class="btn btn-secondary" onclick="closeModal()">Done</button>
+        <button class="btn btn-secondary" onclick="closeNewKeyModal()">Done</button>
       </div>
     </div>
   </div>
 
   <!-- Create Key Modal -->
-  <div class="modal-overlay" id="createKeyModal">
+  <div class="modal-overlay" id="createKeyModal" role="dialog" aria-modal="true" aria-labelledby="createKeyModalTitle">
     <div class="modal">
-      <h3>Create API Key</h3>
+      <h3 id="createKeyModalTitle">Create API Key</h3>
       <form id="createKeyForm">
         <div class="form-group">
           <label for="keyName">Key Name</label>
@@ -180,26 +183,26 @@
         </div>
         <div style="display:flex;gap:8px">
           <button type="submit" class="btn btn-primary">Create</button>
-          <button type="button" class="btn btn-secondary" onclick="document.getElementById('createKeyModal').classList.remove('show')">Cancel</button>
+          <button type="button" class="btn btn-secondary" onclick="closeCreateKeyModal()">Cancel</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Delete Account Modal -->
-  <div class="modal-overlay" id="deleteAccountModal">
+  <div class="modal-overlay" id="deleteAccountModal" role="dialog" aria-modal="true" aria-labelledby="deleteAccountModalTitle">
     <div class="modal">
-      <h3>Delete Your Account</h3>
+      <h3 id="deleteAccountModalTitle">Delete Your Account</h3>
       <p style="color:var(--text-secondary);margin-bottom:16px">This action is permanent and cannot be undone. All your data, API keys, and subscriptions will be deleted.</p>
       <form id="deleteAccountForm">
         <div class="form-group">
           <label for="deletePassword">Enter your password to confirm</label>
-          <input type="password" id="deletePassword" required placeholder="Your password">
+          <input type="password" id="deletePassword" required aria-required="true" placeholder="Your password">
         </div>
-        <p id="deleteError" style="color:#ef4444;display:none;margin-bottom:12px"></p>
+        <p id="deleteError" style="color:#ef4444;display:none;margin-bottom:12px" role="alert" aria-live="assertive"></p>
         <div style="display:flex;gap:8px">
           <button type="submit" class="btn btn-danger">Permanently Delete</button>
-          <button type="button" class="btn btn-secondary" onclick="document.getElementById('deleteAccountModal').classList.remove('show')">Cancel</button>
+          <button type="button" class="btn btn-secondary" onclick="closeDeleteAccountModal()">Cancel</button>
         </div>
       </form>
     </div>
