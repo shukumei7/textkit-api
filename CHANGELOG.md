@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Chrome Extension** - Browser extension for right-click text processing on any webpage
+  - Context menu integration with 8 AI-powered endpoints (Summarize, Rewrite, Extract Keywords, Headlines, SEO Meta, Email Subjects, Translate Tone, Repurpose)
+  - Shadow DOM side panel for displaying results with Copy and Replace Selection buttons
+  - Popup interface with login form and usage dashboard (dark theme matching textkitapi.com)
+  - Service worker handles context menu creation and API routing
+  - JWT storage in chrome.storage.local with automatic token refresh and 5-minute early expiry buffer
+  - MV3 (Manifest V3) compliant architecture
+- **Bearer Token Authentication** - Added `Authorization: Bearer <jwt>` support for all API endpoints
+  - Works alongside existing RapidAPI and API key authentication methods
+  - Positioned between local key and test bypass in authentication chain
+  - Supported on `/auth/me` and `/dashboard/studio/usage` endpoints (checks Bearer header first, falls back to cookie)
+  - Login and register endpoints now return `token` in JSON response body alongside setting the cookie
+  - Enables programmatic API access from Chrome extension and other clients
 - **Account Deletion** - Self-service account deletion endpoint (`DELETE /dashboard/account`)
   - Password-verified deletion for security
   - Automatically cancels Stripe subscriptions

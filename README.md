@@ -39,7 +39,65 @@ The API will be available at `http://localhost:3100`
 | GET | `/status` | Detailed service status (no auth) |
 | GET | `/dashboard/studio/usage` | Get usage stats for Studio interface (JWT auth) |
 
+## Chrome Extension
+
+TextKit offers a Chrome browser extension that brings AI-powered text processing to any webpage via right-click context menu.
+
+### Features
+- **Context Menu Integration** - Select text on any webpage, right-click, and choose from 8 AI-powered actions
+- **Available Actions**:
+  - Summarize - Generate brief, medium, or detailed summaries
+  - Rewrite - Transform text tone and style
+  - Extract Keywords - Identify key terms and entities
+  - Headlines - Create attention-grabbing headlines
+  - SEO Meta Tags - Generate optimized meta title, description, and keywords
+  - Email Subject Lines - Craft compelling subject lines
+  - Translate Tone - Change text tone while preserving meaning
+  - Repurpose - Adapt content for different social platforms
+- **Shadow DOM Side Panel** - Results display in a non-intrusive side panel with Copy and Replace Selection buttons
+- **Usage Dashboard** - Popup shows login status, current tier, and daily usage stats
+- **Dark Theme** - Matches textkitapi.com design for consistency
+
+### Installation
+
+1. Navigate to the `chrome-extension/` directory in this repository
+2. Open Chrome and go to `chrome://extensions/`
+3. Enable "Developer mode" (toggle in top right)
+4. Click "Load unpacked"
+5. Select the `chrome-extension/` folder
+
+### Usage
+
+1. **Login** - Click the TextKit extension icon and log in with your textkitapi.com credentials
+2. **Select Text** - Highlight any text on a webpage
+3. **Right-Click** - Choose **TextKit** from the context menu
+4. **Pick Action** - Select the desired text processing action
+5. **View Results** - Results appear in the side panel with options to copy or replace the selected text
+
+The extension automatically handles JWT authentication and token refresh, storing credentials securely in Chrome's local storage.
+
 ## Authentication
+
+### Bearer Token (Programmatic Access)
+
+For programmatic API access (e.g., from the Chrome extension or custom applications), use Bearer token authentication:
+
+```bash
+curl -X POST http://localhost:3100/api/v1/summarize \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Your long text here...", "length": "brief"}'
+```
+
+**Obtaining a token:**
+1. Register or login via `/auth/register` or `/auth/login`
+2. The response includes a `token` field containing your JWT
+3. Use this token in the `Authorization: Bearer <token>` header for subsequent API calls
+
+**Token details:**
+- Expires after 7 days
+- Returned in both login and registration responses
+- Works alongside cookie-based authentication
 
 ### JWT Cookie (Web Application)
 
@@ -68,11 +126,18 @@ curl -X POST http://localhost:3100/api/v1/summarize \
 
 ### Development (Local)
 
-For local development, use the API key from your `.env` file:
+For local development, use the API key from your `.env` file or a JWT Bearer token:
 
 ```bash
+# Using API key
 curl -X POST http://localhost:3100/api/v1/summarize \
   -H "X-Api-Key: your-local-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Your long text here...", "length": "brief"}'
+
+# Using Bearer token (after login)
+curl -X POST http://localhost:3100/api/v1/summarize \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"text": "Your long text here...", "length": "brief"}'
 ```

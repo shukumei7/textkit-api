@@ -22,6 +22,9 @@
       "ApiKey": []
     },
     {
+      "BearerAuth": []
+    },
+    {
       "JwtCookie": []
     }
   ],
@@ -101,6 +104,203 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register new user",
+        "description": "Create a new user account with email and password",
+        "tags": ["Authentication"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User email address"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "description": "User password (minimum 8 characters)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "JWT authentication cookie (HttpOnly, 7-day expiry)"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "JWT token for Bearer authentication"
+                    }
+                  }
+                },
+                "example": {
+                  "user": {
+                    "id": 42,
+                    "email": "user@example.com"
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "description": "Authenticate user with email and password",
+        "tags": ["Authentication"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User email address"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "User password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "JWT authentication cookie (HttpOnly, 7-day expiry)"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "JWT token for Bearer authentication"
+                    }
+                  }
+                },
+                "example": {
+                  "user": {
+                    "id": 42,
+                    "email": "user@example.com"
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get current user",
+        "description": "Returns the currently authenticated user's information. Accepts JWT via Bearer token or cookie.",
+        "tags": ["Authentication"],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "JwtCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User information retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "id": 42,
+                  "email": "user@example.com"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -825,9 +1025,12 @@
     "/dashboard/studio/usage": {
       "get": {
         "summary": "Get Studio usage stats",
-        "description": "Returns current user's tier, today's usage count, and rate limits for TextKit Studio interface",
+        "description": "Returns current user's tier, today's usage count, and rate limits for TextKit Studio interface. Accepts JWT via Bearer token or cookie.",
         "tags": ["Dashboard"],
         "security": [
+          {
+            "BearerAuth": []
+          },
           {
             "JwtCookie": []
           }
@@ -1000,6 +1203,12 @@
         "name": "X-Api-Key",
         "description": "Local API key for development authentication"
       },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token in Authorization header (Bearer scheme) for programmatic API access"
+      },
       "JwtCookie": {
         "type": "apiKey",
         "in": "cookie",
@@ -1052,7 +1261,7 @@
                 },
                 "details": {
                   "type": "string",
-                  "example": "Provide x-rapidapi-proxy-secret or x-api-key header"
+                  "example": "Provide x-rapidapi-proxy-secret, x-api-key, or Authorization: Bearer header"
                 }
               }
             }
@@ -1115,6 +1324,10 @@
     {
       "name": "Health",
       "description": "Health check and status endpoints"
+    },
+    {
+      "name": "Authentication",
+      "description": "User authentication and registration"
     },
     {
       "name": "Content",
