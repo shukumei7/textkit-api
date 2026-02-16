@@ -415,6 +415,10 @@ function replaceSelection(newText) {
 
 // Listen for messages from service worker
 chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.type === 'TEXTKIT_PING') {
+    return; // Just confirms content script is loaded
+  }
+
   if (msg.type === 'TEXTKIT_TOAST') {
     showToast(msg.message);
     return;

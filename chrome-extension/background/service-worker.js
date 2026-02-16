@@ -2,6 +2,19 @@ import ENDPOINTS from '../lib/endpoints.js';
 import { apiCall } from '../lib/api-client.js';
 import { getToken } from '../lib/token-manager.js';
 
+async function ensureContentScript(tabId) {
+  try {
+    // Check if already injected by sending a ping
+    await chrome.tabs.sendMessage(tabId, { type: 'TEXTKIT_PING' });
+  } catch {
+    // Not injected yet, inject now
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ['content/content.js'],
+    });
+  }
+}
+
 // Create context menus on install
 chrome.runtime.onInstalled.addListener(() => {
   // Parent menu
@@ -33,6 +46,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   const text = info.selectionText;
   if (!text) return;
+
+  await ensureContentScript(tab.id);
 
   // Check if logged in
   const token = await getToken();

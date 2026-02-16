@@ -12,7 +12,8 @@
   "permissions": [
     "contextMenus",
     "storage",
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
   "host_permissions": [
     "https://www.textkitapi.com/*"
@@ -28,12 +29,5 @@
       "32": "icons/icon-32.png",
       "48": "icons/icon-48.png"
     }
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content/content.js"],
-      "run_at": "document_idle"
-    }
-  ]
+  }
 }
