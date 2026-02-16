@@ -40,6 +40,8 @@ function createApp() {
   });
   app.use('/auth/login', authLimiter);
   app.use('/auth/register', authLimiter);
+  app.use('/auth/forgot-password', authLimiter);
+  app.use('/auth/reset-password', authLimiter);
 
   // Page view tracking (before static files)
   app.use(pageTracker);

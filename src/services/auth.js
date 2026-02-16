@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
@@ -68,6 +69,40 @@ function updateStripeCustomerId(userId, stripeCustomerId) {
   ).run(stripeCustomerId, userId);
 }
 
+async function generateResetToken(email) {
+  const db = getDb();
+  const user = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+  if (!user) return null;
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const tokenHash = await bcrypt.hash(token, SALT_ROUNDS);
+
+  db.prepare(
+    "UPDATE users SET reset_token = ?, reset_token_expires = datetime('now', '+1 hour'), updated_at = datetime('now') WHERE email = ?"
+  ).run(tokenHash, email);
+
+  return token;
+}
+
+async function validateResetToken(email, token) {
+  const db = getDb();
+  const user = db.prepare(
+    "SELECT id, reset_token, reset_token_expires FROM users WHERE email = ? AND reset_token IS NOT NULL AND reset_token_expires > datetime('now')"
+  ).get(email);
+  if (!user) return null;
+
+  const valid = await bcrypt.compare(token, user.reset_token);
+  return valid ? user : null;
+}
+
+async function updatePassword(userId, newPassword) {
+  const db = getDb();
+  const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+  db.prepare(
+    "UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL, updated_at = datetime('now') WHERE id = ?"
+  ).run(passwordHash, userId);
+}
+
 module.exports = {
   createUser,
   authenticateUser,
@@ -75,4 +110,7 @@ module.exports = {
   verifyToken,
   getUserById,
   updateStripeCustomerId,
+  generateResetToken,
+  validateResetToken,
+  updatePassword,
 };

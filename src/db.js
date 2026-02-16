@@ -88,6 +88,18 @@ function getDb() {
 
   db.prepare('CREATE INDEX IF NOT EXISTS idx_page_views_path ON page_views(path, created_at)').run();
 
+  // Migration: add password reset columns to users table
+  try {
+    db.prepare('ALTER TABLE users ADD COLUMN reset_token TEXT').run();
+  } catch (e) {
+    // Column already exists — ignore
+  }
+  try {
+    db.prepare('ALTER TABLE users ADD COLUMN reset_token_expires TEXT').run();
+  } catch (e) {
+    // Column already exists — ignore
+  }
+
   return db;
 }
 

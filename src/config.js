@@ -40,6 +40,10 @@ const config = {
     secret: process.env.JWT_SECRET || 'dev-jwt-secret-change-in-production',
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   },
+  resend: {
+    apiKey: process.env.RESEND_API_KEY,
+    fromEmail: process.env.RESEND_FROM_EMAIL || 'noreply@textkitapi.com',
+  },
   adminEmails: (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean),
   adminApiKey: process.env.ADMIN_API_KEY,
   nodeEnv: process.env.NODE_ENV || 'development',
