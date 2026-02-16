@@ -54,7 +54,7 @@
 
   <main id="main-content" class="legal-content">
     <h1>Privacy Policy</h1>
-    <p class="last-updated">Last updated: February 2026</p>
+    <p class="last-updated">Last updated: February 16, 2026</p>
 
     <h2>Information We Collect</h2>
     <p>We collect the following information when you use TextKit API:</p>
@@ -66,6 +66,7 @@
       <li><strong>API usage logs</strong> — Including endpoint accessed, timestamp, and tokens used</li>
       <li><strong>Page view data</strong> — We log the page path and referrer URL for basic analytics. This data is anonymous and not linked to your account.</li>
       <li><strong>Session cookies</strong> — A single httpOnly JWT cookie for authentication</li>
+      <li><strong>Chrome Extension data</strong> — JWT authentication token stored locally in chrome.storage.local, and selected text when you explicitly use a TextKit context menu action</li>
     </ul>
 
     <h2>How We Use Your Information</h2>
@@ -109,6 +110,16 @@
       <li>All connections to the API and website are encrypted using HTTPS</li>
       <li>API keys are stored as SHA-256 hashes in the database</li>
       <li>Database uses WAL (Write-Ahead Logging) mode for data integrity</li>
+    </ul>
+
+    <h2>Chrome Extension Privacy</h2>
+    <p>Our Chrome extension is designed with privacy in mind:</p>
+    <ul>
+      <li><strong>No background tracking</strong> — The extension only activates when you explicitly use a context menu action</li>
+      <li><strong>Local storage only</strong> — Your JWT authentication token is stored locally using chrome.storage.local on your device</li>
+      <li><strong>No browsing data</strong> — We do not access your browsing history, bookmarks, or other browser data</li>
+      <li><strong>Explicit actions</strong> — Text is only sent to our API when you right-click and choose a TextKit action</li>
+      <li><strong>No persistent connections</strong> — The extension does not maintain background connections or track pages you visit</li>
     </ul>
 
     <h2>Cookies</h2>

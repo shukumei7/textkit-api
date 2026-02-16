@@ -298,8 +298,21 @@ function showToast(message) {
 }
 
 function formatResult(data) {
-  // Handle different response shapes from endpoints
   if (typeof data === 'string') return data;
+
+  // Compare: { similarity, differences: [{aspect, text1, text2}], summary }
+  // Checked before Summarize since both have 'summary'
+  if (data.differences || data.similarity !== undefined) {
+    let text = '';
+    if (data.summary) text += data.summary + '\n\n';
+    if (data.differences && data.differences.length) {
+      text += 'Differences:\n' + data.differences.map(d =>
+        typeof d === 'string' ? `• ${d}` : `• ${d.aspect}: Text 1 — ${d.text1}; Text 2 — ${d.text2}`
+      ).join('\n') + '\n\n';
+    }
+    if (data.similarity !== undefined) text += `Similarity: ${Math.round(data.similarity * 100)}%`;
+    return text.trim();
+  }
 
   // Summarize: { summary, keyPoints }
   if (data.summary) {
@@ -313,47 +326,55 @@ function formatResult(data) {
   // Rewrite: { rewritten }
   if (data.rewritten) return data.rewritten;
 
-  // Keywords: { keywords, entities }
-  if (data.keywords) {
-    let text = 'Keywords: ' + data.keywords.map(k => typeof k === 'string' ? k : k.keyword || k.term).join(', ');
-    if (data.entities && data.entities.length) {
-      text += '\n\nEntities:\n' + data.entities.map(e => `• ${e.name || e} (${e.type || 'entity'})`).join('\n');
+  // Keywords: { keywords: [{word, relevance}], entities, topics }
+  if (data.keywords && !data.seo) {
+    let text = 'Keywords: ' + data.keywords.map(k => typeof k === 'string' ? k : k.word || k.keyword || k.term).join(', ');
+    if (data.entities) {
+      if (Array.isArray(data.entities)) {
+        text += '\n\nEntities:\n' + data.entities.map(e => `• ${typeof e === 'string' ? e : e.name} (${e.type || 'entity'})`).join('\n');
+      } else {
+        for (const [cat, items] of Object.entries(data.entities)) {
+          if (Array.isArray(items) && items.length) {
+            text += `\n\n${cat}:\n` + items.map(e => `• ${typeof e === 'string' ? e : e.name}`).join('\n');
+          }
+        }
+      }
     }
+    if (data.topics && data.topics.length) text += '\n\nTopics: ' + data.topics.join(', ');
     return text;
   }
 
-  // Headlines: { headlines }
-  if (data.headlines) return data.headlines.map((h, i) => `${i + 1}. ${h}`).join('\n');
+  // Headlines: { headlines: [{text, type, characterCount}] }
+  if (data.headlines) return data.headlines.map((h, i) => `${i + 1}. ${typeof h === 'string' ? h : h.text}`).join('\n');
 
-  // SEO Meta: { title, description, keywords }
-  if (data.title && data.description) {
-    return `Title: ${data.title}\n\nDescription: ${data.description}${data.keywords ? '\n\nKeywords: ' + (Array.isArray(data.keywords) ? data.keywords.join(', ') : data.keywords) : ''}`;
+  // SEO Meta: { seo: { titleTag, metaDescription, ogTitle, ogDescription, keywords[] } }
+  if (data.seo) {
+    const s = data.seo;
+    let text = '';
+    if (s.titleTag) text += `Title: ${s.titleTag}\n\n`;
+    if (s.metaDescription) text += `Description: ${s.metaDescription}\n\n`;
+    if (s.ogTitle) text += `OG Title: ${s.ogTitle}\n\n`;
+    if (s.ogDescription) text += `OG Description: ${s.ogDescription}\n\n`;
+    if (s.keywords) text += 'Keywords: ' + (Array.isArray(s.keywords) ? s.keywords.join(', ') : s.keywords);
+    return text.trim();
   }
 
-  // Email subject lines: { subjectLines }
-  if (data.subjectLines) return data.subjectLines.map((s, i) => `${i + 1}. ${s}`).join('\n');
+  // Email subject lines: { subjectLines: [{text, style, estimatedOpenRate}] }
+  if (data.subjectLines) return data.subjectLines.map((s, i) => `${i + 1}. ${typeof s === 'string' ? s : s.text}`).join('\n');
 
   // Tone: { translated }
   if (data.translated) return data.translated;
 
-  // Repurpose: { platforms }
+  // Repurpose: { platforms: { twitter: {post, hashtags[]}, ... } }
   if (data.platforms) {
-    return data.platforms.map(p => `--- ${p.platform || p.name} ---\n${p.content || p.text}`).join('\n\n');
-  }
-
-  // Compare: { comparison, analysis, results, similarities, differences }
-  if (data.comparison || data.analysis) {
-    let text = '';
-    if (data.comparison) text += data.comparison + '\n\n';
-    if (data.analysis) text += data.analysis + '\n\n';
-    if (data.similarities && data.similarities.length) {
-      text += 'Similarities:\n' + data.similarities.map(s => `• ${s}`).join('\n') + '\n\n';
+    if (Array.isArray(data.platforms)) {
+      return data.platforms.map(p => `--- ${p.platform || p.name} ---\n${p.post || p.content || p.text}`).join('\n\n');
     }
-    if (data.differences && data.differences.length) {
-      text += 'Differences:\n' + data.differences.map(d => `• ${d}`).join('\n');
-    }
-    if (data.results) text += data.results;
-    return text.trim();
+    return Object.entries(data.platforms).map(([platform, content]) => {
+      const post = typeof content === 'string' ? content : content.post || content.content || content.text;
+      const hashtags = content.hashtags && content.hashtags.length ? '\n' + content.hashtags.map(t => `#${t}`).join(' ') : '';
+      return `--- ${platform} ---\n${post}${hashtags}`;
+    }).join('\n\n');
   }
 
   // Fallback: stringify
