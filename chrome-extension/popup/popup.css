@@ -18,6 +18,10 @@ body {
   align-items: center;
 }
 
+.view[hidden] {
+  display: none;
+}
+
 .logo {
   width: 56px;
   height: 56px;

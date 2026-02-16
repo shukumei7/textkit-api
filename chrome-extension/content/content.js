@@ -341,6 +341,21 @@ function formatResult(data) {
     return data.platforms.map(p => `--- ${p.platform || p.name} ---\n${p.content || p.text}`).join('\n\n');
   }
 
+  // Compare: { comparison, analysis, results, similarities, differences }
+  if (data.comparison || data.analysis) {
+    let text = '';
+    if (data.comparison) text += data.comparison + '\n\n';
+    if (data.analysis) text += data.analysis + '\n\n';
+    if (data.similarities && data.similarities.length) {
+      text += 'Similarities:\n' + data.similarities.map(s => `• ${s}`).join('\n') + '\n\n';
+    }
+    if (data.differences && data.differences.length) {
+      text += 'Differences:\n' + data.differences.map(d => `• ${d}`).join('\n');
+    }
+    if (data.results) text += data.results;
+    return text.trim();
+  }
+
   // Fallback: stringify
   return JSON.stringify(data, null, 2);
 }
@@ -379,6 +394,11 @@ function replaceSelection(newText) {
 
 // Listen for messages from service worker
 chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.type === 'TEXTKIT_TOAST') {
+    showToast(msg.message);
+    return;
+  }
+
   if (msg.type === 'TEXTKIT_LOADING') {
     showPanel(`
       <div class="panel-header">

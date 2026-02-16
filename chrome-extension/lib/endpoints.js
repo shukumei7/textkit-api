@@ -64,6 +64,15 @@ const ENDPOINTS = [
     minLength: 50,
     maxLength: 10000,
   },
+  {
+    id: 'compare',
+    label: 'Compare Texts',
+    path: '/api/v1/compare',
+    fieldName: 'text1',
+    minLength: 10,
+    maxLength: 10000,
+    dualInput: true,
+  },
 ];
 
 export default ENDPOINTS;
