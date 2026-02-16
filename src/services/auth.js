@@ -71,8 +71,18 @@ function updateStripeCustomerId(userId, stripeCustomerId) {
 
 async function generateResetToken(email) {
   const db = getDb();
-  const user = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+  const user = db.prepare(
+    'SELECT id, reset_token_expires FROM users WHERE email = ?'
+  ).get(email);
   if (!user) return null;
+
+  // Per-email cooldown: skip if a token was generated less than 5 minutes ago
+  if (user.reset_token_expires) {
+    const recent = db.prepare(
+      "SELECT 1 WHERE ? > datetime('now', '+55 minutes')"
+    ).get(user.reset_token_expires);
+    if (recent) return null;
+  }
 
   const token = crypto.randomBytes(32).toString('hex');
   const tokenHash = await bcrypt.hash(token, SALT_ROUNDS);
