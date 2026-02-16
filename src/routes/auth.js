@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { createUser, authenticateUser, signToken, generateResetToken, validateResetToken, updatePassword, getUserById } = require('../services/auth');
-const { sendPasswordResetEmail } = require('../services/email-sender');
+const { sendPasswordResetEmail, sendWelcomeEmail, sendAdminNewUserAlert } = require('../services/email-sender');
 const { jwtAuth } = require('../middleware/jwt-auth');
 
 const router = Router();
@@ -34,6 +34,14 @@ router.post('/auth/register', async (req, res, next) => {
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
+
+    // Fire-and-forget: don't await, don't block registration
+    sendWelcomeEmail(user.email, user.name).catch(err =>
+      console.error('Welcome email failed:', err.message)
+    );
+    sendAdminNewUserAlert(user).catch(err =>
+      console.error('Admin alert email failed:', err.message)
+    );
 
     res.status(201).json({
       message: 'Account created',
