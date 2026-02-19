@@ -47,187 +47,18 @@
 
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <style>
-    .hero-stats {
-      display: flex;
-      gap: 32px;
-      justify-content: center;
-      margin-top: 40px;
-      flex-wrap: wrap;
-    }
-    .hero-stat {
-      text-align: center;
-    }
-    .hero-stat .num {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .hero-stat .txt {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-    .hero-badges {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-    .try-it {
-      padding: 80px 24px;
-      background: linear-gradient(180deg, transparent 0%, rgba(124, 58, 237, 0.05) 100%);
-    }
-    .try-it h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 8px;
-    }
-    .try-it-subtitle {
-      text-align: center;
-      color: var(--text-secondary);
-      margin-bottom: 32px;
-    }
-    .try-it-box {
-      max-width: 700px;
-      margin: 0 auto;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-    }
-    .try-it-box textarea {
-      width: 100%;
-      min-height: 100px;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      padding: 12px;
-      font-family: inherit;
-      font-size: 0.9rem;
-      resize: vertical;
-      outline: none;
-    }
-    .try-it-box textarea:focus { border-color: var(--accent); }
-    .try-it-controls {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin-top: 12px;
-    }
-    .try-it-controls select {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      padding: 8px 12px;
-      font-size: 0.85rem;
-      outline: none;
-    }
-    .try-it-result {
-      margin-top: 16px;
-      padding: 16px;
-      background: var(--bg-page);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      line-height: 1.6;
-      color: var(--text-secondary);
-      white-space: pre-wrap;
-      display: none;
-    }
-    .try-it-result.show { display: block; }
-    .try-it-meta {
-      margin-top: 8px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-align: right;
-    }
-    .use-cases {
-      padding: 80px 24px;
-    }
-    .use-cases h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 48px;
-    }
-    .use-cases-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .use-case-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px;
-    }
-    .use-case-card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-      color: var(--accent);
-    }
-    .use-case-card p {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-    .cta-section {
-      padding: 80px 24px;
-      text-align: center;
-      background: radial-gradient(ellipse at bottom, rgba(124, 58, 237, 0.1) 0%, transparent 60%);
-    }
-    .cta-section h2 {
-      font-size: 2rem;
-      margin-bottom: 12px;
-    }
-    .cta-section p {
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-      font-size: 1.1rem;
-    }
-    .code-snippet {
-      max-width: 600px;
-      margin: 32px auto 0;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      text-align: left;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      overflow-x: auto;
-    }
-    .code-snippet .kw { color: var(--accent); }
-    .code-snippet .str { color: var(--success); }
-    .code-snippet .cmt { color: var(--text-muted); }
-    @media (max-width: 768px) {
-      .use-cases-grid { grid-template-columns: 1fr; }
-      .hero-stats { gap: 20px; }
-    }
-  </style>
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">Text<span>Kit</span></a>
-      <ul class="nav-links">
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false" id="navToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
         <li><a href="#features">Features</a></li>
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="/docs">Docs</a></li>
@@ -239,42 +70,91 @@
   </nav>
 
   <main id="main-content">
+
+  <!-- SECTION 1: HERO -->
   <section class="hero">
     <div class="container">
-      <h1>Ship Text Features<br>in Minutes</h1>
-      <p>One API, 9 AI-powered endpoints. Summarize, rewrite, repurpose, analyze tone, extract keywords, optimize SEO — add powerful text features to your app with a single API call.</p>
+      <h1>Still writing prompt templates by hand?</h1>
+      <p>Your app needs AI text features. Your content needs repurposing. Your emails need writing. You don't need to build an AI pipeline for any of it.</p>
       <div class="hero-buttons">
-        <a href="/register.html" class="btn btn-primary">Start Free — No Credit Card</a>
-        <a href="#try-it" class="btn btn-secondary">Try It Live</a>
+        <a href="#try-it" class="btn btn-primary">Try It Free — No Signup</a>
+        <a href="/register.html" class="btn btn-secondary">Get Your API Key</a>
       </div>
-      <div class="hero-badges">
-        <span class="hero-badge">REST API</span>
-        <span class="hero-badge">GPT-4o Powered</span>
-        <span class="hero-badge">99.9% Uptime</span>
-        <span class="hero-badge">Available on RapidAPI</span>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <div class="num">9</div>
-          <div class="txt">AI Endpoints</div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: AGITATE -->
+  <section class="agitate">
+    <div class="container">
+      <h2>Sound familiar?</h2>
+      <div class="agitate-grid">
+        <div class="agitate-card">
+          <h3>Building AI features in-house</h3>
+          <ul>
+            <li>Writing prompt templates for each use case</li>
+            <li>Parsing unpredictable LLM output into structured JSON</li>
+            <li>Retry logic, rate limiting, token tracking</li>
+            <li>Maintaining it all when models change</li>
+          </ul>
+          <p class="agitate-kicker">That's weeks of work — for a summarize button.</p>
         </div>
-        <div class="hero-stat">
-          <div class="num">&lt;3s</div>
-          <div class="txt">Avg Response</div>
+        <div class="agitate-card">
+          <h3>Repurposing content manually</h3>
+          <ul>
+            <li>Rewriting one blog post for 5 different platforms</li>
+            <li>Matching brand voice across formats</li>
+            <li>A/B testing dozens of headline variations</li>
+            <li>Hiring a VA for $500+/month to do what a tool should</li>
+          </ul>
+          <p class="agitate-kicker">Same content, five platforms, zero automation.</p>
         </div>
-        <div class="hero-stat">
-          <div class="num">Free</div>
-          <div class="txt">Tier Available</div>
+        <div class="agitate-card">
+          <h3>Writing the same text over and over</h3>
+          <ul>
+            <li>Rewriting at different reading levels for different clients</li>
+            <li>Extracting keywords manually for SEO articles</li>
+            <li>Summarizing long documents by hand</li>
+            <li>Writing marketing emails that should take 5 minutes but take an hour</li>
+          </ul>
+          <p class="agitate-kicker">Your time is worth more than copy-paste.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Try It Live Demo -->
+  <!-- SECTION 3: SOLVE — Three Ways In -->
+  <section class="ways-in">
+    <div class="container">
+      <h2>One toolkit. Your way.</h2>
+      <p class="section-subtitle">Whether you code, click, or right-click — TextKit handles the text work.</p>
+      <div class="ways-in-grid">
+        <div class="ways-in-card">
+          <h3>Code it</h3>
+          <p class="ways-in-tagline">9 REST endpoints. Structured JSON. One API key.</p>
+          <p>POST /api/v1/summarize and get clean output — no prompt engineering needed.</p>
+          <a href="/docs" class="ways-in-link">Read the docs &rarr;</a>
+        </div>
+        <div class="ways-in-card">
+          <h3>Click it</h3>
+          <p class="ways-in-tagline">Web interface for all 9 tools. No code required.</p>
+          <p>Paste your text, pick a tool, get results. Built for content teams and marketers.</p>
+          <a href="/studio.html" class="ways-in-link">Open Studio &rarr;</a>
+        </div>
+        <div class="ways-in-card">
+          <h3>Right-click it</h3>
+          <p class="ways-in-tagline">Text tools in your browser. Select, right-click, done.</p>
+          <p>Summarize articles, rewrite emails, extract keywords — without leaving the page.</p>
+          <a href="#" class="ways-in-link">Get the extension &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: LIVE DEMO -->
   <section class="try-it" id="try-it">
     <div class="container">
-      <h2>Try It Live</h2>
-      <p class="try-it-subtitle">Paste any text below and see TextKit in action. No API key needed.</p>
+      <h2>See it work</h2>
+      <p class="try-it-subtitle">Paste any text and pick an endpoint. No API key needed.</p>
       <div class="try-it-box">
         <label for="demoInput" class="sr-only">Demo input text</label>
         <textarea id="demoInput" placeholder="Paste an article, email, or any text here...">Artificial intelligence has transformed the way businesses operate. From automating customer service with chatbots to generating marketing copy at scale, AI tools are becoming essential for companies of all sizes. The key challenge remains integration — most teams don't have the resources to build AI features from scratch, which is why API-first solutions are gaining traction rapidly.</textarea>
@@ -300,9 +180,52 @@
     </div>
   </section>
 
+  <!-- SECTION 5: CODE COMPARISON -->
+  <section class="code-compare-section">
+    <div class="container">
+      <h2>50 lines or 3?</h2>
+      <div class="code-compare">
+        <div class="code-block code-block-diy">
+          <p class="code-block-label">The DIY way</p>
+          <pre><code><span class="cc-kw">const</span> prompt = <span class="cc-str">`Summarize the following...
+  Keep it under 100 words...
+  Return as JSON with keys...`</span>;
+
+<span class="cc-kw">const</span> completion = <span class="cc-kw">await</span> openai.chat
+  .completions.create({
+    model: <span class="cc-str">'gpt-4o'</span>,
+    messages: [{ role: <span class="cc-str">'system'</span>, content: prompt },
+               { role: <span class="cc-str">'user'</span>, content: text }],
+    temperature: 0.7,
+    max_tokens: 500,
+  });
+
+<span class="cc-kw">const</span> raw = completion.choices[0].message.content;
+<span class="cc-cmt">// Parse JSON... handle errors... track tokens...
+// Rate limit... retry on failure... log usage...</span></code></pre>
+        </div>
+        <div class="code-block code-block-textkit">
+          <p class="code-block-label">The TextKit way</p>
+          <pre><code><span class="cc-kw">const</span> res = <span class="cc-kw">await</span> fetch(<span class="cc-str">'https://textkitapi.com/api/v1/summarize'</span>, {
+  method: <span class="cc-str">'POST'</span>,
+  headers: {
+    <span class="cc-str">'x-api-key'</span>: <span class="cc-str">'tk_live_your_key'</span>,
+    <span class="cc-str">'Content-Type'</span>: <span class="cc-str">'application/json'</span>
+  },
+  body: JSON.stringify({ text }),
+});
+<span class="cc-kw">const</span> { summary } = <span class="cc-kw">await</span> res.json();
+<span class="cc-cmt">// Done. Structured JSON. Every time.</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: FEATURES -->
   <section class="features" id="features">
     <div class="container">
-      <h2>9 Endpoints, One API Key</h2>
+      <h2>9 endpoints, one API key</h2>
+      <p class="section-subtitle">Every endpoint returns structured JSON. Every plan includes all 9.</p>
       <div class="features-grid">
         <div class="feature-card">
           <h3>Repurpose</h3>
@@ -344,32 +267,12 @@
     </div>
   </section>
 
-  <!-- Use Cases -->
-  <section class="use-cases">
-    <div class="container">
-      <h2>Built for Your Stack</h2>
-      <div class="use-cases-grid">
-        <div class="use-case-card">
-          <h3>SaaS Platforms</h3>
-          <p>Add AI writing features to your app. Let users summarize docs, generate emails, or optimize content — without building your own AI pipeline.</p>
-        </div>
-        <div class="use-case-card">
-          <h3>Content Teams</h3>
-          <p>Repurpose one blog post into tweets, LinkedIn posts, email newsletters, and SEO meta — all through a single API call.</p>
-        </div>
-        <div class="use-case-card">
-          <h3>Marketing Automation</h3>
-          <p>Generate subject lines, analyze tone for brand consistency, extract keywords for ad targeting — at scale, via API.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
+  <!-- SECTION 7: PRICING -->
   <section class="pricing" id="pricing">
     <div class="container">
-      <h2>Simple, Transparent Pricing</h2>
-      <p class="pricing-subtitle">Start free, upgrade when you're ready. No credit card required.</p>
-      <div class="pricing-grid">
+      <h2>Simple, transparent pricing</h2>
+      <p class="pricing-subtitle">Start free. Upgrade when you need to. No credit card required.</p>
+      <div class="pricing-grid pricing-grid-3">
         <div class="pricing-card">
           <h3>Free</h3>
           <div class="pricing-price">$0<span>/mo</span></div>
@@ -377,20 +280,10 @@
             <li>10 requests/day</li>
             <li>2 requests/minute</li>
             <li>All 9 endpoints</li>
+            <li>API, Studio, and Extension</li>
             <li>No credit card required</li>
           </ul>
           <a href="/register.html" class="btn btn-primary" style="width:100%">Start Free</a>
-        </div>
-        <div class="pricing-card">
-          <h3>Basic</h3>
-          <div class="pricing-price">$9<span>/mo</span></div>
-          <ul class="pricing-features">
-            <li>100 requests/day</li>
-            <li>10 requests/minute</li>
-            <li>All 9 endpoints</li>
-            <li>Email support</li>
-          </ul>
-          <a href="/register.html" class="btn btn-secondary" style="width:100%">Get Started</a>
         </div>
         <div class="pricing-card featured">
           <h3>Pro</h3>
@@ -401,53 +294,33 @@
             <li>All 9 endpoints</li>
             <li>Priority support</li>
           </ul>
-          <a href="/register.html" class="btn btn-primary" style="width:100%">Choose Plan</a>
+          <a href="/register.html" class="btn btn-primary" style="width:100%">Choose Pro</a>
         </div>
         <div class="pricing-card">
-          <h3>Ultra</h3>
-          <div class="pricing-price">$79<span>/mo</span></div>
+          <h3>Need more?</h3>
+          <div class="pricing-price pricing-price-custom">Custom</div>
           <ul class="pricing-features">
-            <li>2,000 requests/day</li>
-            <li>60 requests/minute</li>
-            <li>All 9 endpoints</li>
-            <li>Priority support</li>
-          </ul>
-          <a href="/register.html" class="btn btn-secondary" style="width:100%">Choose Plan</a>
-        </div>
-        <div class="pricing-card">
-          <h3>Mega</h3>
-          <div class="pricing-price">$199<span>/mo</span></div>
-          <ul class="pricing-features">
-            <li>Unlimited requests</li>
-            <li>120 requests/minute</li>
-            <li>All 9 endpoints</li>
+            <li>Custom volume pricing</li>
+            <li>Higher rate limits</li>
             <li>Dedicated support</li>
+            <li>SLA available</li>
           </ul>
-          <a href="/register.html" class="btn btn-secondary" style="width:100%">Choose Plan</a>
+          <a href="mailto:support@textkitapi.com" class="btn btn-secondary" style="width:100%">Contact Us</a>
         </div>
       </div>
+      <p class="pricing-also">Also available: Basic ($9/mo, 100 req/day) and Ultra ($79/mo, 2,000 req/day)</p>
     </div>
   </section>
 
-  <!-- Integration CTA -->
-  <section class="cta-section">
+  <!-- SECTION 8: FINAL CTA -->
+  <section class="final-cta">
     <div class="container">
-      <h2>Start Building in 30 Seconds</h2>
-      <p>Get your API key and make your first call. It's that simple.</p>
-      <a href="/register.html" class="btn btn-primary">Get Your Free API Key</a>
-      <div class="code-snippet" role="figure" aria-label="Example API call using JavaScript fetch">
-        <span class="cmt">// That's it. One call.</span><br>
-        <span class="kw">const</span> res = <span class="kw">await</span> <span class="kw">fetch</span>(<span class="str">'https://www.textkitapi.com/api/v1/summarize'</span>, {<br>
-        &nbsp;&nbsp;method: <span class="str">'POST'</span>,<br>
-        &nbsp;&nbsp;headers: {<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="str">'x-api-key'</span>: <span class="str">'tk_live_your_key'</span>,<br>
-        &nbsp;&nbsp;},<br>
-        &nbsp;&nbsp;body: JSON.stringify({ text: <span class="str">'Your content here...'</span> }),<br>
-        });<br>
-      </div>
+      <h2>Get your API key in 30 seconds</h2>
+      <p>Free tier forever. No credit card. All 9 endpoints.</p>
+      <a href="/register.html" class="btn btn-primary">Create Free Account</a>
     </div>
   </section>
+
   </main>
 
   <footer class="footer">
@@ -501,6 +374,15 @@
     btn.disabled = false;
     loading.style.display = 'none';
   }
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', function() {
+    const expanded = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', String(!expanded));
+    navLinks.classList.toggle('nav-links-open');
+  });
   </script>
 </body>
 </html>
