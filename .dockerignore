@@ -1,0 +1,11 @@
+node_modules/
+.env
+db/
+.git/
+coverage/
+*.log
+marketing/
+__tests__/
+__mocks__/
+tests/
+chrome-extension.zip
