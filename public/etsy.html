@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etsy Listing Generator — TextKit API</title>
+  <meta name="description" content="Generate SEO-optimized Etsy titles, descriptions, and all 13 tags in 30 seconds. Free to try, no account needed.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <style>
+    .etsy-page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 100px 24px 60px;
+    }
+
+    .etsy-hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .etsy-hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .etsy-hero p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-bottom: 16px;
+    }
+
+    .tries-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: var(--accent-light);
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 32px;
+    }
+
+    .field-group {
+      margin-bottom: 18px;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .field-group label .required {
+      color: var(--accent);
+      margin-left: 2px;
+    }
+
+    .field-group input[type="text"],
+    .field-group textarea,
+    .field-group select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.15s;
+    }
+
+    .field-group input[type="text"]:focus,
+    .field-group textarea:focus,
+    .field-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .field-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .field-group select option[value=""] {
+      color: var(--text-secondary);
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 13px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    .generate-btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-msg {
+      display: none;
+      padding: 12px 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-sm);
+      color: #ff6b6b;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .error-msg.show { display: block; }
+
+    /* Results */
+    .results-section {
+      display: none;
+    }
+
+    .results-section.show {
+      display: block;
+    }
+
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .result-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .result-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .char-badge {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      padding: 2px 7px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.78rem;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+    }
+
+    .copy-btn.copied {
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .result-content {
+      color: var(--text-primary);
+      line-height: 1.65;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+
+    /* Tags */
+    .tags-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .tag-chip {
+      padding: 4px 12px;
+      background: var(--accent-light);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 14px;
+      font-size: 0.82rem;
+    }
+
+    .copy-all-tags-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.15s;
+    }
+
+    .copy-all-tags-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+    }
+
+    .copy-all-tags-btn.copied {
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    /* Pricing modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 32px 32px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+
+    .modal-close:hover { color: var(--text-primary); }
+
+    .modal-card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .modal-card p {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-actions .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 11px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: background 0.15s;
+    }
+
+    .modal-actions .btn-primary:hover { background: var(--accent-hover); }
+
+    .modal-actions .btn-secondary {
+      background: none;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 11px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: all 0.15s;
+    }
+
+    .modal-actions .btn-secondary:hover {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+    }
+
+    @media (max-width: 600px) {
+      .etsy-hero h1 { font-size: 1.6rem; }
+      .form-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Text<span>Kit</span></a>
+      <ul class="nav-links">
+        <li><a href="/docs">Docs</a></li>
+        <li><a href="/login.html">Login</a></li>
+        <li><a href="/register.html">Sign up</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main-content" class="etsy-page">
+    <div class="etsy-hero">
+      <h1>Write Etsy listings that actually get found</h1>
+      <p>Generate SEO-optimized titles, descriptions, and all 13 tags in 30 seconds.</p>
+      <span class="tries-badge" id="tries-badge">3 free tries &mdash; no account needed</span>
+    </div>
+
+    <div id="errorArea" class="error-msg" role="alert"></div>
+
+    <div class="form-card">
+      <form id="etsyForm" novalidate>
+        <div class="field-group">
+          <label for="name">Product name <span class="required">*</span></label>
+          <input type="text" id="name" name="name" placeholder="e.g. Hand-dyed cotton tote bag" maxlength="200" required>
+        </div>
+        <div class="field-group">
+          <label for="materials">Materials / specs</label>
+          <textarea id="materials" name="materials" placeholder="e.g. 100% cotton canvas, hand-dyed with natural indigo, 15oz weight" maxlength="500"></textarea>
+        </div>
+        <div class="field-group">
+          <label for="features">Key features</label>
+          <textarea id="features" name="features" placeholder="e.g. machine washable, zipper pocket, reinforced handles" maxlength="500"></textarea>
+        </div>
+        <div class="field-group">
+          <label for="style">Style</label>
+          <select id="style" name="style">
+            <option value="">— select style —</option>
+            <option value="artisan">Handmade / Artisan</option>
+            <option value="modern">Modern / Minimal</option>
+            <option value="playful">Fun / Playful</option>
+            <option value="professional">Professional / Shop</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="targetBuyer">Target buyer</label>
+          <input type="text" id="targetBuyer" name="targetBuyer" placeholder="e.g. plant lovers, new moms, dog owners" maxlength="200">
+        </div>
+        <button type="submit" class="generate-btn" id="generateBtn">
+          <span class="spinner" id="spinner"></span>
+          <span id="btnText">Generate listing</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="results-section" id="resultsSection">
+      <!-- Title -->
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-label">Title</span>
+          <div class="result-meta">
+            <span class="char-badge" id="titleChars">0 / 140</span>
+            <button class="copy-btn" data-target="titleContent">Copy</button>
+          </div>
+        </div>
+        <div class="result-content" id="titleContent"></div>
+      </div>
+
+      <!-- Description -->
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-label">Description</span>
+          <div class="result-meta">
+            <span class="char-badge" id="descChars">0 chars</span>
+            <button class="copy-btn" data-target="descContent">Copy</button>
+          </div>
+        </div>
+        <div class="result-content" id="descContent"></div>
+      </div>
+
+      <!-- Tags -->
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-label">Tags <span id="tagCount" style="font-weight:400;text-transform:none;color:var(--text-secondary)">(0 / 13)</span></span>
+          <button class="copy-all-tags-btn" id="copyAllTagsBtn">Copy all tags</button>
+        </div>
+        <div class="tags-grid" id="tagsGrid"></div>
+      </div>
+
+      <!-- Meta -->
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-label">Meta description</span>
+          <div class="result-meta">
+            <span class="char-badge" id="metaChars">0 / 160</span>
+            <button class="copy-btn" data-target="metaContent">Copy</button>
+          </div>
+        </div>
+        <div class="result-content" id="metaContent"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><a href="/terms.html">Terms of Service</a> &middot; <a href="/privacy.html">Privacy Policy</a></p>
+    </div>
+  </footer>
+
+  <!-- Pricing modal -->
+  <div class="modal-overlay" id="pricingModal" role="dialog" aria-modal="true" aria-labelledby="pricingModalTitle">
+    <div class="modal-card">
+      <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+      <h2 id="pricingModalTitle">You've used your 3 free listings</h2>
+      <p>Create a free account for 10 listings/day, or go Pro for unlimited.</p>
+      <div class="modal-actions">
+        <a href="/register.html" class="btn-primary">Create free account</a>
+        <a href="/index.html#pricing" class="btn-secondary">See pricing</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ANON_LIMIT = 3;
+    const LOCAL_KEY = 'etsy_tries';
+
+    function getLocalTries() {
+      return parseInt(localStorage.getItem(LOCAL_KEY) || '0', 10);
+    }
+
+    function setLocalTries(n) {
+      localStorage.setItem(LOCAL_KEY, String(n));
+    }
+
+    function updateTriesBadge() {
+      const used = getLocalTries();
+      const remaining = Math.max(0, ANON_LIMIT - used);
+      const badge = document.getElementById('tries-badge');
+      if (remaining > 0) {
+        badge.textContent = `${remaining} free ${remaining === 1 ? 'try' : 'tries'} remaining`;
+      } else {
+        badge.textContent = 'Free tries used \u2014 sign up to continue';
+      }
+    }
+
+    function showModal() {
+      document.getElementById('pricingModal').classList.add('show');
+    }
+
+    function hideModal() {
+      document.getElementById('pricingModal').classList.remove('show');
+    }
+
+    async function copyText(text, btn) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (_) {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = btn.dataset.target === undefined ? 'Copy all tags' : 'Copy';
+        btn.classList.remove('copied');
+      }, 1800);
+    }
+
+    function renderResults(data) {
+      // Title
+      const titleEl = document.getElementById('titleContent');
+      titleEl.textContent = data.title;
+      document.getElementById('titleChars').textContent = `${data.title.length} / 140`;
+
+      // Description
+      const descEl = document.getElementById('descContent');
+      descEl.textContent = data.description;
+      document.getElementById('descChars').textContent = `${data.description.length} chars`;
+
+      // Tags
+      const tagsGrid = document.getElementById('tagsGrid');
+      tagsGrid.innerHTML = '';
+      (data.tags || []).forEach(tag => {
+        const chip = document.createElement('span');
+        chip.className = 'tag-chip';
+        chip.textContent = tag;
+        tagsGrid.appendChild(chip);
+      });
+      document.getElementById('tagCount').textContent = `(${(data.tags || []).length} / 13)`;
+
+      // Meta
+      const metaEl = document.getElementById('metaContent');
+      metaEl.textContent = data.meta;
+      document.getElementById('metaChars').textContent = `${data.meta.length} / 160`;
+
+      document.getElementById('resultsSection').classList.add('show');
+      document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function setLoading(loading) {
+      const btn = document.getElementById('generateBtn');
+      const spinner = document.getElementById('spinner');
+      const btnText = document.getElementById('btnText');
+      btn.disabled = loading;
+      spinner.style.display = loading ? 'block' : 'none';
+      btnText.textContent = loading ? 'Generating...' : 'Generate listing';
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorArea');
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    function clearError() {
+      const el = document.getElementById('errorArea');
+      el.textContent = '';
+      el.classList.remove('show');
+    }
+
+    // Copy buttons
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('.copy-btn');
+      if (btn) {
+        const targetId = btn.dataset.target;
+        const text = document.getElementById(targetId).textContent;
+        copyText(text, btn);
+        return;
+      }
+
+      const copyAllBtn = e.target.closest('#copyAllTagsBtn');
+      if (copyAllBtn) {
+        const chips = document.querySelectorAll('.tag-chip');
+        const allTags = Array.from(chips).map(c => c.textContent).join(', ');
+        copyText(allTags, copyAllBtn);
+      }
+    });
+
+    // Modal close
+    document.getElementById('modalCloseBtn').addEventListener('click', hideModal);
+    document.getElementById('pricingModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('pricingModal')) hideModal();
+    });
+
+    // Form submit
+    document.getElementById('etsyForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      clearError();
+
+      // Check local tries before sending
+      if (getLocalTries() >= ANON_LIMIT) {
+        showModal();
+        return;
+      }
+
+      const name = document.getElementById('name').value.trim();
+      if (!name) {
+        showError('Product name is required.');
+        return;
+      }
+
+      const body = { name };
+      const materials = document.getElementById('materials').value.trim();
+      const features = document.getElementById('features').value.trim();
+      const style = document.getElementById('style').value;
+      const targetBuyer = document.getElementById('targetBuyer').value.trim();
+
+      if (materials) body.materials = materials;
+      if (features) body.features = features;
+      if (style) body.style = style;
+      if (targetBuyer) body.targetBuyer = targetBuyer;
+
+      setLoading(true);
+
+      try {
+        const res = await fetch('/api/product-description', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json();
+
+        if (res.status === 429 && (data.code === 'ANON_LIMIT_REACHED' || data.code === 'RATE_LIMIT_DAY')) {
+          setLocalTries(ANON_LIMIT);
+          updateTriesBadge();
+          showModal();
+          return;
+        }
+
+        if (!res.ok) {
+          const msg = Array.isArray(data.details)
+            ? data.details.join('. ')
+            : (data.details || data.error || 'Something went wrong. Please try again.');
+          showError(msg);
+          return;
+        }
+
+        renderResults(data);
+
+        // Update local try counter for anonymous users
+        if (data.tries_remaining !== undefined) {
+          const used = ANON_LIMIT - data.tries_remaining;
+          setLocalTries(used);
+          updateTriesBadge();
+
+          if (data.tries_remaining === 0) {
+            setTimeout(showModal, 1200);
+          }
+        }
+      } catch (_) {
+        showError('Network error. Please check your connection and try again.');
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Init badge on load
+    updateTriesBadge();
+  </script>
+</body>
+</html>
