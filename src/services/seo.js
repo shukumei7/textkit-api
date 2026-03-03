@@ -15,7 +15,7 @@ async function generateSEOMeta({ text, url, keywords }) {
 
   return {
     seo: data,
-    metadata: { url: url || null, providedKeywords: keywords || [], tokensUsed },
+    metadata: { url: url || '', providedKeywords: keywords || [], tokensUsed },
   };
 }
 

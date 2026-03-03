@@ -132,13 +132,14 @@ done
 
 # ------------------------------------------
 echo ""
-echo "--- V1 VALIDATION ERRORS (demo key, missing required fields) ---"
+echo "--- V1 VALIDATION ERRORS (MEGA key, missing required fields) ---"
+echo "    (Using MEGA key — demo key has 5 req/min limit which fires before validation)"
 
 for ep in repurpose summarize rewrite "seo/meta" "email/subject-lines" headlines "extract/keywords" "translate/tone" compare; do
   r=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/v1/$ep" \
-    -H "x-api-key: $DEMO_KEY" \
+    -H "x-api-key: $LOCAL_KEY" \
     -H "Content-Type: application/json" -d '{}')
-  check_status "POST /api/v1/$ep (missing text, demo key)" "400" "$r"
+  check_status "POST /api/v1/$ep (missing text)" "400" "$r"
 done
 
 # ------------------------------------------
@@ -150,7 +151,7 @@ echo "    (Using MEGA-tier key to avoid per-minute rate limit interference)"
 r=$(curl -s -o /tmp/tk_body -w "%{http_code}" -X POST "$BASE/api/v1/summarize" \
   -H "x-api-key: $LOCAL_KEY" \
   -H "Content-Type: application/json" \
-  -d "{\"text\":\"$SHORT_TEXT\",\"length\":\"short\"}")
+  -d "{\"text\":\"$SHORT_TEXT\",\"length\":\"brief\"}")
 check_status "POST /api/v1/summarize (MEGA key)" "200" "$r"
 body=$(cat /tmp/tk_body)
 check_field "POST /api/v1/summarize" "summary" "$body"
@@ -176,27 +177,29 @@ body=$(cat /tmp/tk_body)
 check_field "POST /api/v1/extract/keywords" "keywords" "$body"
 check_no_null "POST /api/v1/extract/keywords" "$body"
 
-# SEO meta
+# SEO meta (response: {seo: {metaDescription, titleTag, ogTitle, ogDescription, keywords}, metadata})
 r=$(curl -s -o /tmp/tk_body -w "%{http_code}" -X POST "$BASE/api/v1/seo/meta" \
   -H "x-api-key: $LOCAL_KEY" \
   -H "Content-Type: application/json" \
   -d "{\"text\":\"$SHORT_TEXT\"}")
 check_status "POST /api/v1/seo/meta (MEGA key)" "200" "$r"
 body=$(cat /tmp/tk_body)
-check_field "POST /api/v1/seo/meta" "title" "$body"
+check_field "POST /api/v1/seo/meta" "seo" "$body"
+check_field "POST /api/v1/seo/meta" "titleTag" "$body"
 check_no_null "POST /api/v1/seo/meta" "$body"
 
-# Tone
+# Tone (response: {translated, detectedTone, targetTone, toneShifts, metadata})
 r=$(curl -s -o /tmp/tk_body -w "%{http_code}" -X POST "$BASE/api/v1/translate/tone" \
   -H "x-api-key: $LOCAL_KEY" \
   -H "Content-Type: application/json" \
   -d "{\"text\":\"$SHORT_TEXT\",\"targetTone\":\"professional\"}")
 check_status "POST /api/v1/translate/tone (MEGA key)" "200" "$r"
 body=$(cat /tmp/tk_body)
-check_field "POST /api/v1/translate/tone" "rewritten" "$body"
+check_field "POST /api/v1/translate/tone" "translated" "$body"
+check_field "POST /api/v1/translate/tone" "detectedTone" "$body"
 check_no_null "POST /api/v1/translate/tone" "$body"
 
-# Headlines
+# Headlines (response: {headlines: [...], metadata})
 r=$(curl -s -o /tmp/tk_body -w "%{http_code}" -X POST "$BASE/api/v1/headlines" \
   -H "x-api-key: $LOCAL_KEY" \
   -H "Content-Type: application/json" \
@@ -206,24 +209,24 @@ body=$(cat /tmp/tk_body)
 check_field "POST /api/v1/headlines" "headlines" "$body"
 check_no_null "POST /api/v1/headlines" "$body"
 
-# Repurpose
+# Repurpose (response: {platforms: {twitter: {post, hashtags}, ...}, metadata})
 r=$(curl -s -o /tmp/tk_body -w "%{http_code}" -X POST "$BASE/api/v1/repurpose" \
   -H "x-api-key: $LOCAL_KEY" \
   -H "Content-Type: application/json" \
   -d "{\"text\":\"$SHORT_TEXT\",\"platform\":\"twitter\"}")
 check_status "POST /api/v1/repurpose (MEGA key)" "200" "$r"
 body=$(cat /tmp/tk_body)
-check_field "POST /api/v1/repurpose" "repurposed" "$body"
+check_field "POST /api/v1/repurpose" "platforms" "$body"
 check_no_null "POST /api/v1/repurpose" "$body"
 
-# Email subject lines
+# Email subject lines (response: {subjectLines: [{text, style, estimatedOpenRate}], metadata})
 r=$(curl -s -o /tmp/tk_body -w "%{http_code}" -X POST "$BASE/api/v1/email/subject-lines" \
   -H "x-api-key: $LOCAL_KEY" \
   -H "Content-Type: application/json" \
   -d "{\"text\":\"$SHORT_TEXT\"}")
 check_status "POST /api/v1/email/subject-lines (MEGA key)" "200" "$r"
 body=$(cat /tmp/tk_body)
-check_field "POST /api/v1/email/subject-lines" "subjects" "$body"
+check_field "POST /api/v1/email/subject-lines" "subjectLines" "$body"
 check_no_null "POST /api/v1/email/subject-lines" "$body"
 
 # Compare (needs two texts)
