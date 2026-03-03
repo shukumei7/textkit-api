@@ -206,10 +206,10 @@ router.get('/auth/verify', auth, (req, res) => {
 
   // Email only available for registered users (not RapidAPI/demo/local)
   const knownSystemUsers = ['rapidapi-user', 'demo-user', 'local-dev'];
-  let email = null;
+  let email = '';
   if (!knownSystemUsers.includes(userId)) {
     const user = getUserById(parseInt(userId));
-    email = user?.email || null;
+    email = user?.email || '';
   }
 
   res.json({
