@@ -1,0 +1,15 @@
+{
+  "name": "textkit-zapier",
+  "version": "1.0.0",
+  "description": "Zapier integration for TextKit API — AI-powered text processing",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --testEnvironment node"
+  },
+  "dependencies": {
+    "zapier-platform-core": "16.3.1"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
