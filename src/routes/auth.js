@@ -2,6 +2,9 @@ const { Router } = require('express');
 const { createUser, authenticateUser, signToken, generateResetToken, validateResetToken, updatePassword, getUserById } = require('../services/auth');
 const { sendPasswordResetEmail, sendWelcomeEmail, sendAdminNewUserAlert } = require('../services/email-sender');
 const { jwtAuth } = require('../middleware/jwt-auth');
+const { auth } = require('../middleware/auth');
+const { getDb } = require('../db');
+const config = require('../config');
 
 const router = Router();
 
@@ -187,6 +190,36 @@ router.post('/auth/reset-password', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+// Zapier credential verification endpoint
+// Used by Zapier during app setup to confirm the API key is valid
+router.get('/auth/verify', auth, (req, res) => {
+  const db = getDb();
+  const userId = req.userId;
+  const tier = req.userTier;
+  const limits = config.rateLimits[tier] || { perDay: 0, perMinute: 0 };
+
+  const todayCount = db.prepare(
+    "SELECT COUNT(*) as count FROM usage_log WHERE user_id = ? AND created_at >= datetime('now', 'start of day')"
+  ).get(userId);
+
+  // Email only available for registered users (not RapidAPI/demo/local)
+  const knownSystemUsers = ['rapidapi-user', 'demo-user', 'local-dev'];
+  let email = null;
+  if (!knownSystemUsers.includes(userId)) {
+    const user = getUserById(parseInt(userId));
+    email = user?.email || null;
+  }
+
+  res.json({
+    success: true,
+    user_id: userId,
+    email,
+    tier,
+    requests_today: todayCount.count,
+    daily_limit: limits.perDay === Infinity ? null : limits.perDay,
+  });
 });
 
 module.exports = router;
